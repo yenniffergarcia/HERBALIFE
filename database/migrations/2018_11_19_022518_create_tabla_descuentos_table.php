@@ -6,27 +6,17 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaDescuentosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('descuentos', function (Blueprint $table) {
+        Schema::create('descuento', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('porcentaje',10);
+            $table->decimal('porcentaje', 5,2)->unique();         
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('descuentos');
+        Schema::dropIfExists('descuento');
     }
 }

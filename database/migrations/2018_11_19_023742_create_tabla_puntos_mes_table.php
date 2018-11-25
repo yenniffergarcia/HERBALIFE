@@ -6,34 +6,25 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaPuntosMesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('puntos_mes', function (Blueprint $table) {
+        Schema::create('punto_mes', function (Blueprint $table) {
             $table->increments('id');
+
             $table->unsignedInteger('fkmes');
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkfactura');
 
-            $table->foreign('fkmes')->references('id')->on('tabla_meses')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkfactura')->references('id')->on('facturas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkmes')->references('id')->on('mes')->onUpdate('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkfactura')->references('id')->on('factura')->onUpdate('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('puntos_mes');
+        Schema::dropIfExists('punto_mes');
     }
 }

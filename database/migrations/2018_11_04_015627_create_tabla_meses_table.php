@@ -6,14 +6,9 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaMesesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('tabla_meses', function (Blueprint $table) {
+        Schema::create('mes', function (Blueprint $table) {
             $table->increments('id');
             $table->string('mes',20);
 
@@ -21,13 +16,8 @@ class CreateTablaMesesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('tabla_meses');
+        Schema::dropIfExists('mes');
     }
 }

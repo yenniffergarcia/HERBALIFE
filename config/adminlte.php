@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'title' => 'IMEDCHI',
+    'title' => 'Herbalife',
 
     'title_prefix' => '',
 
@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'logo' => '<b>Sistema</b>IMEDCHI',
+    'logo' => '<b>Sistema</b>Herbalife',
 
     'logo_mini' => '',
 
@@ -105,7 +105,7 @@ return [
     |
     */
     'menuAdmin' => [
-        'Administrador',
+        'Menú',
         [
             'text' => '',
             'url'  => '',
@@ -121,33 +121,33 @@ return [
             'icon'    => 'wrench',
             'submenu' => [
                 [
-                'text' => 'Profesion',
-                'url'  => '/mantenimiento/profesion',
+                'text' => 'Categoria',
+                'url'  => '/Categoria',
                 'icon_color' => 'red',
                 ],
                 [
-                'text' => 'Tipo Persona',
-                'url'  => '/mantenimiento/tipopersona',
+                'text' => 'Descuento',
+                'url'  => '/Descuento',
                 'icon_color' => 'red',
                 ], 
                 [
-                'text' => 'Genero',
-                'url'  => '/mantenimiento/genero',
+                'text' => 'Nivel',
+                'url'  => '/Nivel',
                 'icon_color' => 'red',
                 ],   
                 [
-                'text' => 'Tipo Email',
-                'url'  => '/mantenimiento/tipoemail',
+                'text' => 'Paquete Inicial',
+                'url'  => '/PaqueteInicial',
                 'icon_color' => 'red',
                 ],   
                 [
-                'text' => 'Compania',
-                'url'  => '/mantenimiento/compania',
+                'text' => 'Producto',
+                'url'  => '/Producto',
                 'icon_color' => 'red',
                 ],  
                 [
                 'text' => 'Persona',
-                'url'  => '/sistema/imedchi/persona',
+                'url'  => '/Persona/Admin/Data',
                 'icon_color' => 'red',
                 ],  
                 [
@@ -157,352 +157,18 @@ return [
                 ],                                                                                                
             ],
         ],
+        [
+            'text'    => 'Panel de Control',
+            'icon'    => 'wrench',
+            'submenu' => [
+                [
+                'text' => 'Persona',
+                'url'  => '/Persona',
+                'icon_color' => 'yellow',
+                ],                                                                                               
+            ],
+        ],        
     ],
-    'menuBlackboard' => [
-        'Blckboard',
-        [
-            'text' => '',
-            'url'  => '',
-            'can'  => '',
-        ],
-        [
-            'text'    => 'Dashboard',
-            'icon'    => 'tachometer',
-            'url'  => '/dashboard/blackboard',
-        ],        
-        [
-            'text'    => 'Administración',
-            'icon'    => 'folder',
-            'submenu' => [
-                [
-                'text'    => 'Contenido Educativo',
-                'url'     => '#',
-                'icon_color' => 'red',
-                'submenu' => [
-                    [
-                        'text' => 'Cargar Contenido',
-                        'url'  => '/plataforma/blackboard/cargar/contenido_educativo/catedratico',
-                        'icon_color' => 'red',
-                    ],
-                    [
-                        'text' => 'Contenido Historico',
-                        'url'  => '/plataforma/blackboard/contenido_educativo/catedratico/historico', 'CatedraticoContenidoEducativoController@index_historico',
-                        'icon_color' => 'red',
-                    ],                    
-                ],
-                ],
-                [
-                'text'    => 'Contenido Educativo',
-                'url'     => '#',
-                'icon_color' => 'yellow',
-                'submenu' => [
-                    [
-                        'text' => 'Cargar Contenido',
-                        'url'  => '/plataforma/blackboard/cargar/contenido_educativo/alumno',
-                        'icon_color' => 'yellow',
-                    ],
-                    [
-                        'text' => 'Contenido Historico',
-                        'url'  => '/plataforma/blackboard/contenido_educativo/alumno/historico',
-                        'icon_color' => 'yellow',
-                    ],                      
-                ],
-                ],                
-            ],
-        ],
-        [
-            'text'    => 'Evaluación',
-            'icon'    => 'file',
-            'submenu' => [
-                [
-                'text'    => 'Crear Cuestionario',
-                'url'     => '#',
-                'icon_color' => 'red',
-                'submenu' => [
-                    [
-                        'text' => 'Cuestionario',
-                        'url'  => '/plataforma/blackboard/cuestionario',
-                        'icon_color' => 'red',
-                    ],
-                    [
-                        'text'    => 'Cuestionarios Finalizados',
-                        'url'     => '/plataforma/blackboard/cuestionario/historicos/catedraticohistorico',
-                        'icon_color' => 'red',
-                    ],
-                ],
-                ],
-
-                [
-                'text'    => 'Bandeja de Cuestionario',
-                'url'     => '#',
-                'icon_color' => 'yellow',
-                'submenu' => [
-                    [
-                        'text' => 'Responder Cuestionario',
-                        'url'  => '/plataforma/blackboard/bandeja/responder/cuestionario',
-                        'icon_color' => 'yellow',
-                    ],
-                    [
-                        'text'    => 'Cuestionarios Resueltos',
-                        'url'     => '/plataforma/blackboard/cuestionario/historicos/alumnohistorico',
-                        'icon_color' => 'yellow',
-                    ],
-                ],
-                ],
-            ],                       
-        ],
-    ],
-
-    'menuGestionAcademica' => [
-        'Gestion Académica',
-        [
-            'text' => '',
-            'url'  => '',
-            'can'  => '',
-        ],
-        [
-            'text'    => 'Dashboard',
-            'icon'    => 'tachometer',
-            'url'  => '#',
-        ],        
-        [
-            'text'    => 'Administración Estudiantil',
-            'icon'    => 'archive',
-            'submenu' => [
-                [
-                'text' => 'Ingreso de Alumnos',
-                'url'  => '/academico/estudiante/estudiante',
-                'icon_color' => 'red',
-                ],
-                [
-                'text'    => 'Ingreso de Encargados',
-                'url'     => '/academico/encargado/encargado',
-                'icon_color' => 'red',
-                ],
-                [
-                'text'    => 'Ingreso de Docentes',
-                'url'     => '/academico/docente/docente',
-                'icon_color' => 'yellow',
-                ],
-                [
-                'text'    => 'Cursos Docentes',
-                'url'     => '/academico/catedraticocurso/catedraticocurso',
-                'icon_color' => 'yellow',
-                ],
-            ],
-        ],
-        [
-            'text'    => 'Administración Académica',
-            'icon'    => 'suitcase',
-            'submenu' => [
-                [
-                'text' => 'Inscripción de Alumnos',
-                'url'  => '/academico/inscripcion/inscripcion',
-                'icon_color' => 'red',
-                ],
-                  [
-                'text' => 'Planificación de Actividades',
-                'url'  => '#',
-                'icon_color' => 'yellow',
-                'submenu' => [
-                    [
-                        'text' => 'Calendarización',
-                        'url'  => '/academico/agenda/agenda',
-                        'icon_color' => 'yellow',
-                    ],
-                      [
-                        'text' => 'Tipo de actividad ',
-                        'url'  => '/academico/tipoactividad/tipoactividad',
-                        'icon_color' => 'yellow',
-                    ],             
-                ],                
-                ],
-                [
-                'text' => 'Administración de Notas',
-                'url'  => '#',
-                'icon_color' => 'aqua',
-                'submenu' => [
-                    [
-                        'text' => 'Control de Notas',
-                        'url'  => '/academico/nota/nota',
-                        'icon_color' => 'aqua',
-                    ],
-                      [
-                        'text' => 'Cantidad de Alumnos ',
-                        'url'  => '/mantenimiento/cantidadalumno',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                        'text' => 'Período Académico',
-                        'url'  => '/mantenimiento/periodoacademico',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                        'text' => 'Carreras y cursos',
-                        'url'  => '/mantenimiento/carreracurso',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                        'text' => 'Carreras y grados',
-                        'url'  => '/mantenimiento/carreragrado',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                        'text'    => 'Carreras',
-                        'url'     => '/mantenimiento/carrera',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                        'text' => 'Grado',
-                        'url'  => '/mantenimiento/grado',
-                        'icon_color' => 'aqua',
-                    ],
-                    [
-                    'text' => 'Cursos',
-                    'url'  => '/mantenimiento/curso',
-                    'icon_color' => 'aqua',
-                    ],                     
-                ],                
-                ],                           
-            ],
-        ],        
-    ],    
-
-    'menuSistemaAdministrativo' => [
-        'Administrativo',
-        [
-            'text' => '',
-            'url'  => '',
-            'can'  => '',
-        ], 
-        [
-            'text'    => 'Dashboard',
-            'icon'    => 'tachometer',
-            'url'  => '#',
-        ],                 
-        [
-            'text'    => 'Solvencia Alumno',
-            'icon'    => 'book',
-            'submenu' => [
-                [
-                'text' => 'Consulta de Estado',
-                'url'  => '#',
-                'icon_color' => 'red',
-                ],
-            ],  
-        ],        
-        [             
-            'text'    => 'Pagos',
-            'icon'    => 'cc',
-            'submenu' => [
-            [    
-                'text' => 'Planilla',
-                'url'  => '#',
-                'icon_color' => 'red',
-                'submenu' => [
-                    [
-                        'text' => 'Salario',
-                        'url'  => 'gestionadministrativa/controlpago/salario',
-                        'icon_color' => 'red',
-                    ],
-                                                      
-                ],
-            ],
-            [
-                'text'    => 'Académico',
-                'url'     => '#',
-                'icon_color' => 'yellow',
-                'submenu' => [
-                    [
-                        'text' => 'Mensualidad',
-                        'url'  => 'gestionadministrativa/controlpago/pago',
-                        'icon_color' => 'yellow',
-                    ],
-                    [
-                        'text'    => 'Tipo Pago',
-                        'url'     => 'gestionadministrativa/controlpago/tipopago',
-                        'icon_color' => 'yellow',
-                    ],                    
-                ],                 
-            ],
-            ], 
-        ],        
-        [              
-            'text'    => 'Caja Chica',
-            'icon'    => 'fax',
-            'submenu' => [
-                [
-                'text' => 'Saldo',
-                'url'  => '#',
-                'icon_color' => 'red',
-                ],
-                [
-                'text'    => 'Movimiento',
-                'url'     => '#',
-                'icon_color' => 'yellow',
-                ],
-                [
-                'text'    => 'Ajuste',
-                'url'     => '#',
-                'icon_color' => 'aqua',
-                ],                
-            ], 
-        ],
-        [
-            'text'    => 'Reportería',
-            'icon'    => 'folder-open',
-            'submenu' => [
-                [
-                'text' => 'Ver Stock',
-                'url'  => '#',
-                'icon_color' => 'red',
-                ],
-                [
-                'text'    => 'Solvencias',
-                'url'     => '#',
-                'icon_color' => 'yellow',
-                ],
-                [
-                'text'    => 'Pagos',
-                'url'     => '#',
-                'icon_color' => 'aqua',
-                ],                
-            ],                                                       
-        ], 
-
-        [
-            'text'    => 'Inventario',
-            'icon'    => 'suitcase',
-            'submenu' => [
-                 [
-                'text' => 'Categoría',
-                'url'  => '/gestionadministrativa/inventario/categoria',
-                'icon_color' => 'red',
-                ],
-                [
-                'text' => 'Producto',
-                'url'  => '/gestionadministrativa/inventario/producto',
-                'icon_color' => 'red',
-                ],
-                [
-                'text'    => 'Alta Producto',
-                'url'     => '/gestionadministrativa/inventario/altaproducto',
-                'icon_color' => 'yellow',
-                ],     
-                [
-                'text'    => 'Baja Producto',
-                'url'     => '/gestionadministrativa/inventario/bajaproducto',
-                'icon_color' => 'yellow',
-                ], 
-                [
-                'text'    => 'Stock',
-                'url'     => '/gestionadministrativa/inventario/stock',
-                'icon_color' => 'yellow',
-                ],      
-            ],                                                       
-        ],
-    ],    
-
     /*
     |--------------------------------------------------------------------------
     | Menu Filters

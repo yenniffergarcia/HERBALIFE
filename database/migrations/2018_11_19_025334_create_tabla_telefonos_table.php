@@ -6,32 +6,23 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaTelefonosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('telefonos', function (Blueprint $table) {
+        Schema::create('telefono', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('numero',10);
+            $table->string('numero',10)->unique();
+
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkcompania');
 
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkcompania')->references('id')->on('companias')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkcompania')->references('id')->on('compania')->onUpdate('cascade');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('telefonos');
+        Schema::dropIfExists('telefono');
     }
 }

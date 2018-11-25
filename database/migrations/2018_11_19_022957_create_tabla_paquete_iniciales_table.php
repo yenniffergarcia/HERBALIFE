@@ -6,26 +6,19 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaPaqueteInicialesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('paquete_iniciales', function (Blueprint $table) {
+        Schema::create('paquete_inicial', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('nombre', 75)->unique();
+            $table->boolean('estado')->default(1);
+
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('paquete_iniciales');
+        Schema::dropIfExists('paquete_inicial');
     }
 }

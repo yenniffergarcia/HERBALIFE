@@ -6,33 +6,25 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaDetalleCargasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('detalle_cargas', function (Blueprint $table) {
+        Schema::create('detalle_carga', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('cantidad');
+            $table->date('fecha_vencimiento');
+            $table->boolean('estado')->default(1);
+            
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkproducto');
-            $table->date('fecha_vencimiento');
 
-            $table->foreign('fkproducto')->references('id')->on('tabla_productos')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkproducto')->references('id')->on('producto')->onUpdate('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('detalle_cargas');
+        Schema::dropIfExists('detalle_carga');
     }
 }

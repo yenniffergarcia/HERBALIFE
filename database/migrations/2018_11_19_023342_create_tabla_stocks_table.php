@@ -6,34 +6,23 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaStocksTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('stocks', function (Blueprint $table) {
+        Schema::create('stock', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('fkpersona');
-            $table->unsignedInteger('fkdetallecarg');
+            $table->unsignedInteger('fkcarga');
             $table->integer('cantidad');
 
-
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkdetallecarg')->references('id')->on('detalle_cargas')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkcarga')->references('id')->on('detalle_carga')->onUpdate('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('stocks');
+        Schema::dropIfExists('stock');
     }
 }

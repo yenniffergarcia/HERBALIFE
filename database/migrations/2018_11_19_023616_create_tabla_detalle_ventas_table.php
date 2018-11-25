@@ -6,34 +6,25 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaDetalleVentasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('detalle_ventas', function (Blueprint $table) {
+        Schema::create('detalle_venta', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('cantidad');
-            $table->unsignedInteger('fkstock');
-            $table->unsignedInteger('fkfactura');
             $table->date('fecha');
 
-            $table->foreign('fkstock')->references('id')->on('stocks')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkfactura')->references('id')->on('facturas')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedInteger('fkstock');
+            $table->unsignedInteger('fkfactura');
+
+            $table->foreign('fkstock')->references('id')->on('stock')->onUpdate('cascade');
+            $table->foreign('fkfactura')->references('id')->on('factura')->onUpdate('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('detalle_ventas');
+        Schema::dropIfExists('detalle_venta');
     }
 }

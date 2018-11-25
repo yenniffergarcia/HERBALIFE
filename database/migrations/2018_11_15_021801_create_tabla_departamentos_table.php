@@ -6,28 +6,18 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaDepartamentosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('Departamentos', function (Blueprint $table) {
+        Schema::create('departamento', function (Blueprint $table) {
             $table->increments('id');
             $table->string('nombre',50);
-            $table->integer('idPadre');
+            $table->boolean('estado')->default(1); 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('Departamentos');
+        Schema::dropIfExists('departamento');
     }
 }

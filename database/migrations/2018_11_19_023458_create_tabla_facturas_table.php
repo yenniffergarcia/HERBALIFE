@@ -6,34 +6,27 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaFacturasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('facturas', function (Blueprint $table) {
+        Schema::create('factura', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('codpersona',30);
             $table->date('fecha');
+            $table->decimal('subtotal', 10,2);
+            $table->decimal('total', 10,2);
+
+            $table->string('fkcodigo', 10);            
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkpersonivel');
-            $table->integer('total');
 
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkpersonivel')->references('id')->on('persona_niveles')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkcodigo')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkpersonivel')->references('id')->on('persona_nivel')->onUpdate('cascade');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('facturas');
+        Schema::dropIfExists('factura');
     }
 }

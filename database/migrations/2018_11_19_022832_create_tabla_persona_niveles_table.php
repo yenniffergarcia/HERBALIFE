@@ -6,33 +6,25 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaPersonaNivelesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('persona_niveles', function (Blueprint $table) {
+        Schema::create('persona_nivel', function (Blueprint $table) {
             $table->increments('id');
+            $table->boolean('estado')->default(1);
+            
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fknivel');
 
-            $table->foreign('fkpersona')->references('id')->on('personas')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fknivel')->references('id')->on('niveles')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fknivel')->references('id')->on('nivel')->onUpdate('cascade');
             
             
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('persona_niveles');
+        Schema::dropIfExists('persona_nivel');
     }
 }

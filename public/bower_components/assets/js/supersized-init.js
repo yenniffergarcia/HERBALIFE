@@ -20,9 +20,9 @@ jQuery(function($){
         // Components
         slide_links        : 'blank',    // Individual links for each slide (Options: false, 'num', 'name', 'blank')
         slides             : [    // Slideshow Images
-                                 {image : 'bower_components/assets/img/backgrounds/GOPR1964.jpg'},
-                                 {image : 'bower_components/assets/img/backgrounds/GOPR1921.jpg'},
-                                 {image : 'bower_components/assets/img/backgrounds/DSC_1632.jpg'}
+                                 {image : 'bower_components/assets/img/backgrounds/1.jpg'},
+                                 {image : 'bower_components/assets/img/backgrounds/2.jpg'},
+                                 {image : 'bower_components/assets/img/backgrounds/3.jpg'}
                              ]
 
     });

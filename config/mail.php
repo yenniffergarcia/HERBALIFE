@@ -50,7 +50,7 @@ return [
     */
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'emisor.tarea@gmail.com'),
-        'name' => env('MAIL_FROM_NAME', 'IMEDCHI'),
+        'name' => env('MAIL_FROM_NAME', 'HERBALIFE'),
     ],
     /*
     |--------------------------------------------------------------------------

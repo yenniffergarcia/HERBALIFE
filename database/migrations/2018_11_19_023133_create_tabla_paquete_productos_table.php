@@ -6,32 +6,24 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaPaqueteProductosTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('paquete_productos', function (Blueprint $table) {
+        Schema::create('paquete_producto', function (Blueprint $table) {
             $table->increments('id');
+            $table->boolean('estado')->default(1);
+
             $table->unsignedInteger('fkproducto');
             $table->unsignedInteger('fkpaquete');
 
-            $table->foreign('fkproducto')->references('id')->on('tabla_productos')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('fkpaquete')->references('id')->on('paquete_iniciales')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkproducto')->references('id')->on('producto')->onUpdate('cascade');
+            $table->foreign('fkpaquete')->references('id')->on('paquete_inicial')->onUpdate('cascade');
 
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('paquete_productos');
+        Schema::dropIfExists('paquete_producto');
     }
 }

@@ -23,7 +23,7 @@
                 <div class="container">
                     <div class="navbar-header">
                         <a href="{{ url(config('adminlte.dashboard_url', 'home')) }}" class="navbar-brand">
-                            <img src="{{ asset('img/imedchi.jpg') }}" height='50px'><b>Sistema</b>IMEDCHI
+                            <img src="{{ asset('img/herbalife.png') }}" height='50px'><img src="{{ asset('img/header-left.png') }}" height='42px'>
                         </a>
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
                             <i class="fa fa-bars"></i>
@@ -41,9 +41,9 @@
             <!-- Logo -->
             <a href="{{ url(config('adminlte.dashboard_url', 'home')) }}" class="logo">
                 <!-- mini logo for sidebar mini 50x50 pixels -->
-                <span class="logo-mini"><img src="{{ asset('img/imedchi.jpg') }}" height='50px'></span>
+                <span class="logo-mini"><img src="{{ asset('img/herbalife.png') }}" height='50px'></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>Sistema</b>IMEDCHI</span>
+                <span class="logo-lg"><img src="{{ asset('img/header-left.png') }}" height='42px'></span>
             </a>
 
             <!-- Header Navbar -->
@@ -59,7 +59,7 @@
                     <ul class="nav navbar-nav">
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->username }} <span class="caret"></span>
+                                    usuario <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -128,7 +128,7 @@
                 <div class="pull-right hidden-xs">
                   <b>Version</b> 1.0.0
                 </div>
-                <strong>Copyright © 2018 <a href="#">SISTEMA IMEDCHI</a>.</strong> Todos los derechos reservados.
+                <strong>Copyright © 2018 <a href="#">SISTEMA HERBALIFE</a>.</strong> Todos los derechos reservados.
         </footer>         
         <!-- /.content-wrapper -->
     </div>

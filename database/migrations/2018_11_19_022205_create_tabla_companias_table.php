@@ -6,27 +6,18 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaCompaniasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('companias', function (Blueprint $table) {
+        Schema::create('compania', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre',10);
+            $table->string('nombre',10)->unique();
+            $table->boolean('estado')->default(1);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('companias');
+        Schema::dropIfExists('compania');
     }
 }

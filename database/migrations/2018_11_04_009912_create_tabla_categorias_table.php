@@ -6,27 +6,18 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateTablaCategoriasTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
-        Schema::create('tabla_categorias', function (Blueprint $table) {
+        Schema::create('categoria', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre', 30);
+            $table->string('nombre', 50);
+            $table->boolean('estado')->default(1);            
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
-        Schema::dropIfExists('tabla_categorias');
+        Schema::dropIfExists('categoria');
     }
 }
