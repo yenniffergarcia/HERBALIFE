@@ -46,3 +46,10 @@ Route::get('/Persona/buscar/{id}', 'PersonaController@buscar');
 Route::post('/estado/Persona', 'PersonaController@estado');
 Route::post('/estado/Persona/Admin', 'PersonaController@estadoAdmin');
 Route::get('/drop/departamento', 'PersonaController@dropDepartamento');
+
+//DetalleCarga
+Route::resource('/DetalleCarga', 'DetalleCargaController');
+Route::get('/getdata/DetalleCarga', 'DetalleCargaController@getdata')->name('getdata.DetalleCarga');
+Route::get('/DetalleCarga/buscar/{id}', 'DetalleCargaController@buscar');
+Route::post('/estado/DetalleCarga', 'DetalleCargaController@estado');
+Route::get('/drop/producto/{categoria}', 'DetalleCargaController@dropProducto');

@@ -10,8 +10,4 @@ class Nivel extends Model
 	protected $guarded = ['id', 'fkdescuento'];
     protected $fillable = ['nombre', 'estado'];  
 
-    public function Descuento()
-    {
-        return $this->belongsTo('App\Descuento');
-    }       
 }

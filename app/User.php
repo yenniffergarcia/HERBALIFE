@@ -14,9 +14,5 @@ class User extends Authenticatable
 	protected $guarded = ['id'];
     protected $fillable = ['username', 'email', 'fkpersona', 'estado'];
     protected $hidden = ['password', 'remember_token'];   
-    
-    public function Persona()
-    {
-        return $this->belongsTo('App\Persona');
-    }     
+   
 }

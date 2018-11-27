@@ -3,25 +3,24 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Event;
 
 class Stock extends Model
 {
     protected $table = 'stock';
-	protected $guarded = ['id', 'fkpersona', 'fkcarga'];
-    protected $fillable = ['cantidad'];  
+	protected $guarded = ['id', 'fkpersona', 'fkproducto'];
+    protected $fillable = ['cantidad', 'fecha_vencimiento'];  
 
-    public function DetalleVenta()
-    {
-        return $this->hasOne('App\Detalle_Venta');
-    }
+    public static function boot() {
 
-    public function Persona()
-    {
-        return $this->belongsTo('App\Persona');
-    }  
-    
-    public function Carga()
-    {
-        return $this->belongsTo('App\Carga');
-    }     
+	    parent::boot();
+
+	    static::created(function($data) {
+            Event::fire('stock.created', $data);
+        });
+        
+	    static::updated(function($data) {
+            Event::fire('stock.updated', $data);
+	    });        
+	}     
 }

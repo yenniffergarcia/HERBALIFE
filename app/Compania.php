@@ -12,8 +12,4 @@ class Compania extends Model
 	protected $guarded = ['id'];
     protected $fillable = ['nombre', 'estado'];  
 
-    public function Telefono()
-    {
-        return $this->hasOne('App\Telefono');
-    }  
 }

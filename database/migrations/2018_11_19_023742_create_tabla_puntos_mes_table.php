@@ -10,6 +10,7 @@ class CreateTablaPuntosMesTable extends Migration
     {
         Schema::create('punto_mes', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('anio', 6);
 
             $table->unsignedInteger('fkmes');
             $table->unsignedInteger('fkpersona');

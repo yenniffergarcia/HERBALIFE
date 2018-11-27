@@ -10,8 +10,4 @@ class Mes extends Model
 	protected $guarded = ['id'];
     protected $fillable = ['mes'];  
 
-    public function PuntoMes()
-    {
-        return $this->hasOne('App\Punto_Mes');
-    }    
 }

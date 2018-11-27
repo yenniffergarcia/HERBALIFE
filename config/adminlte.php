@@ -165,7 +165,12 @@ return [
                 'text' => 'Persona',
                 'url'  => '/Persona',
                 'icon_color' => 'yellow',
-                ],                                                                                               
+                ],   
+                [
+                'text' => 'Cargar Producto',
+                'url'  => '/DetalleCarga',
+                'icon_color' => 'yellow',
+                ],                                                                                                              
             ],
         ],        
     ],

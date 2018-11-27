@@ -266,7 +266,10 @@
                 },
                 success: function(data) {
                     $('.erroNombre').addClass('hidden');
-                    $('.erroFkDescuento').addClass('hidden');
+                    $('.erroFKCategoria').addClass('hidden');
+                    $('.erroPunto').addClass('hidden');
+                    $('.erroPrecio').addClass('hidden'); 
+                    $('.erroDescripcion').addClass('hidden'); 
     
                     if ((data.errors)) {
                         setTimeout(function () {

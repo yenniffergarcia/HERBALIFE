@@ -10,8 +10,4 @@ class Departamento extends Model
 	protected $guarded = ['id'];
     protected $fillable = ['nombre', 'estado'];  
 
-    public function Persona()
-    {
-        return $this->hasOne('App\Persona');
-    }    
 }
