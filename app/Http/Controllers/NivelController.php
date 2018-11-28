@@ -43,7 +43,7 @@ class NivelController extends Controller
                 btn-xs" type="button" data-id="'.$data->id.'" 
                 data-nombre="'.$data->nombre.'" data-fkdescuento="'.$data->fkdescuento.'">Editar</button>';           
 
-                return $btn_edit.'  '.$btn_estado;
+                return $btn_edit;
             })                  
             ->editColumn('id', 'ID: {{$id}}')       
             ->make(true);

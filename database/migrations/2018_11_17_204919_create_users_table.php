@@ -15,9 +15,11 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('estado')->default(1);
             
-            $table->unsignedInteger('fkpersona');            
+            $table->unsignedInteger('fkpersona');                 
+            $table->unsignedInteger('fkrol');            
             $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
-
+            $table->foreign('fkrol')->references('id')->on('rol')->onUpdate('cascade');
+            
             $table->rememberToken();
             $table->timestamps();
         });

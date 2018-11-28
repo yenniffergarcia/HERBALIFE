@@ -10,6 +10,9 @@ use Response;
 use App\Persona;
 use App\Departamento;
 use App\User;
+use App\PaqueteInicial;
+use App\PaqueteProducto;
+use App\PaqueteInicialPersona;
 use Auth;
 
 class PersonaController extends Controller
@@ -30,6 +33,12 @@ class PersonaController extends Controller
         'email' => 'required|email|max:100|unique:persona',                     
         'fkdepartamento' => 'required|integer',  
     ];
+
+    protected $verificar_insert_paquete_persona =
+    [ 
+        'fkpersona' => 'required|integer',                      
+        'fkpaquete_producto' => 'required|integer',  
+    ];    
 
     public function index()
     {
@@ -92,7 +101,6 @@ class PersonaController extends Controller
     {
         $query = persona::join('departamento', 'persona.fkdepartamento' ,'departamento.id')
             ->leftJoin('users', 'persona.id' ,'users.fkpersona')
-            ->where('persona.estado', 1)
             ->where('persona.id_padre', Auth::user()->fkpersona)
             ->select(['persona.id as id', 'nombre1', 'nombre2', 'apellido1', 
             'apellido2', 'apellido3', 'codigo', 'direccion', 'persona.email as email',
@@ -107,19 +115,34 @@ class PersonaController extends Controller
                 return $data->departamento.', '.$data->direccion;
             })                        
             ->addColumn('action', function ($data) {
+                $btn_paquete = '';
+                $btn_estado = '';
+                $btn_edit = '';
 
-                $btn_estado = '<button class="delete-modal btn btn-danger btn-xs" 
-                type="button" data-id="'.$data->id.'">Eliminar</button>';
+                $exite = PaqueteInicialPersona::where('fkpersona', $data->id)->first();
+                $usuario = User::where('fkpersona', $data->id)->first();
 
-                $btn_edit = '<button class="edit-modal btn btn-warning 
-                btn-xs" type="button" data-id="'.$data->id.'" 
-                data-nombre1="'.$data->nombre1.'" data-nombre2="'.$data->nombre2.'" 
-                data-apellido1="'.$data->apellido1.'" data-apellido2="'.$data->apellido2.'"  
-                data-apellido3="'.$data->apellido3.'" data-codigo="'.$data->codigo.'"
-                data-direccion="'.$data->direccion.'" data-email="'.$data->email.'"
-                data-fkdepartamento="'.$data->fkdepartamento.'" data-email="'.$data->email.'">Editar</button>';           
+                if(is_null($exite))
+                {
+                    $btn_paquete = '<button class="paquete-modal btn btn-success btn-xs" 
+                    type="button" data-id="'.$data->id.'">Agregar Paquete</button>';
+                }
 
-                return $btn_edit.'  '.$btn_estado;
+                if($usuario->estado == 1)
+                {
+                    $btn_estado = '<button class="delete-modal btn btn-danger btn-xs" 
+                    type="button" data-id="'.$data->id.'">Eliminar</button>';
+    
+                    $btn_edit = '<button class="edit-modal btn btn-warning 
+                    btn-xs" type="button" data-id="'.$data->id.'" 
+                    data-nombre1="'.$data->nombre1.'" data-nombre2="'.$data->nombre2.'" 
+                    data-apellido1="'.$data->apellido1.'" data-apellido2="'.$data->apellido2.'"  
+                    data-apellido3="'.$data->apellido3.'" data-codigo="'.$data->codigo.'"
+                    data-direccion="'.$data->direccion.'" data-email="'.$data->email.'"
+                    data-fkdepartamento="'.$data->fkdepartamento.'" data-email="'.$data->email.'">Editar</button>';               
+                }
+
+                return $btn_edit.'  '.$btn_estado.'  '.$btn_paquete;
             })                  
             ->editColumn('id', 'ID: {{$id}}')       
             ->make(true);
@@ -139,6 +162,27 @@ class PersonaController extends Controller
             $data = departamento::where('estado', 1)->select('departamento.*')->get();
             return response()->json($data);
         }        
+    }  
+    
+    public function dropPaqueteIncial(Request $request)
+    {
+        if($request->ajax()){
+            $data = PaqueteInicial::where('estado', 1)->select('paquete_inicial.*')->get();
+            return response()->json($data);
+        }        
+    }  
+    
+    public function dropPaqueteProducto(Request $request, $paquete)
+    {
+        if($request->ajax()){
+            $data = PaqueteProducto::join('producto', 'paquete_producto.fkproducto', 'producto.id')
+                    ->join('categoria', 'producto.fkcategoria', 'categoria.id')
+                    ->where('fkpaquete', $paquete)
+                    ->where('paquete_producto.estado', 1)
+                    ->select('paquete_producto.id as id', 'producto.nombre as producto', 'precio',
+                    'punto', 'categoria.nombre as categoria')->get();
+            return response()->json($data);
+        }        
     }    
 
     public function create()
@@ -148,6 +192,8 @@ class PersonaController extends Controller
 
     public function store(Request $request)
     {
+        $id_padre = Auth::user()->fkpersona;
+        if(Auth::user()->fkrol == 1) { $id_padre = 0; }
         $validator = Validator::make(Input::all(), $this->verificar_insert);
         
         if ($validator->fails()) {
@@ -161,13 +207,28 @@ class PersonaController extends Controller
             $data->apellido3 = $request->apellido3;
             $data->codigo = $this->crearCodigo();
             $data->direccion = $request->direccion;
-            $data->id_padre = Auth::user()->fkpersona;     
+            $data->id_padre = $id_padre;     
             $data->email = $request->email;                      
             $data->fkdepartamento = $request->fkdepartamento;            
             $data->save();
             return response()->json($data);
         } 
     }
+
+    public function storePaquetePersona(Request $request)
+    {
+        $validator = Validator::make(Input::all(), $this->verificar_insert_paquete_persona);
+        if ($validator->fails()) {
+            return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+        } else {
+            $data = new PaqueteInicialPersona;
+            $data->fkpersona = $request->fkpersona;
+            $data->fkpaquete_producto = $request->fkpaquete_producto;           
+            $data->save();
+            return response()->json($data);
+        } 
+    }
+
 
     public function show($id)
     {

@@ -4,20 +4,20 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTablaPuntosMesTable extends Migration
+class TablaPaqueteInicialesPersonasTable extends Migration
 {
     public function up()
     {
-        Schema::create('punto_mes', function (Blueprint $table) {
+        Schema::create('paquete_inicial_persona', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('fecha');
-            $table->decimal('punto', 10,2);
+            $table->boolean('estado')->default(1);
 
-            $table->unsignedInteger('fkmes');
             $table->unsignedInteger('fkpersona');
+            $table->unsignedInteger('fkpaquete_producto');
 
-            $table->foreign('fkmes')->references('id')->on('mes')->onUpdate('cascade');
             $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkpaquete_producto')->references('id')->on('paquete_producto')->onUpdate('cascade');
+
 
             $table->timestamps();
         });
@@ -25,6 +25,6 @@ class CreateTablaPuntosMesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('punto_mes');
+        Schema::dropIfExists('paquete_inicial_persona');
     }
 }

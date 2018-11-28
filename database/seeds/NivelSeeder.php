@@ -12,8 +12,18 @@ class NivelSeeder extends Seeder
         $data->save();
 
         $data = new App\Nivel();
-        $data->nombre = 'Constructor del Exito';
+        $data->nombre = 'Consultor Mayor';
         $data->fkdescuento = 2;
+        $data->save();         
+
+        $data = new App\Nivel();
+        $data->nombre = 'Constructor del Exito';
+        $data->fkdescuento = 3;
         $data->save(); 
+
+        $data = new App\Nivel();
+        $data->nombre = 'Mayorista';
+        $data->fkdescuento = 4;
+        $data->save();         
     }
 }

@@ -14,10 +14,10 @@ class CreateTablaDetalleVentasTable extends Migration
             $table->date('fecha');
 
             $table->unsignedInteger('fkstock');
-            $table->unsignedInteger('fkfactura');
+            $table->unsignedInteger('fkpedido');
 
             $table->foreign('fkstock')->references('id')->on('stock')->onUpdate('cascade');
-            $table->foreign('fkfactura')->references('id')->on('factura')->onUpdate('cascade');
+            $table->foreign('fkpedido')->references('id')->on('pedido')->onUpdate('cascade');
 
             $table->timestamps();
         });

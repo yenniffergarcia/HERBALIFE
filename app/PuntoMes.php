@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class PuntoMes extends Model
 {
     protected $table = 'punto_mes';
-    protected $guarded = ['id', 'fkmes', 'fkpersona', 'fkfactura', 'anio']; 
+    protected $guarded = ['id', 'fkmes', 'fkpersona', 'fecha']; 
+    protected $fillable = ['fecha', 'punto'];  
 
 }

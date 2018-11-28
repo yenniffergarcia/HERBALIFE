@@ -8,7 +8,7 @@ class CreateTablaFacturasTable extends Migration
 {
     public function up()
     {
-        Schema::create('factura', function (Blueprint $table) {
+        Schema::create('pedido', function (Blueprint $table) {
             $table->increments('id');
             $table->date('fecha');
             $table->decimal('subtotal', 10,2);
@@ -27,6 +27,6 @@ class CreateTablaFacturasTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('factura');
+        Schema::dropIfExists('pedido');
     }
 }

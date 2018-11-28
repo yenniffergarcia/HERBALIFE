@@ -45,6 +45,14 @@ class EventServiceProvider extends ServiceProvider
             'App\Events\StockEvent@updated_venta',
         ],        
 
+        // ------- Eventos (Triggers), para las acciones en el modelo PaqueteInicialPersona --------
+        'paque_puntos.created' => [
+            'App\Events\PaqueteInicialPersonaEvent@created_paquetepuntos',
+        ],  
+        'paquete_nivel.created' => [
+            'App\Events\PaqueteInicialPersonaEvent@created_personanivel',
+        ],        
+
     ];
 
 

@@ -12,6 +12,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\Persona;
 use App\User;
+use Auth;
 
 class PersonaEvent
 {
@@ -54,12 +55,31 @@ class PersonaEvent
         $permitidas= array ("a","e","i","o","u","A","E","I","O","U","n","N","A","E","I","O","U","a","e","i","o","u","c","C","a","e","i","o","u","A","E","I","O","U","u","o","O","i","a","e","U","I","A","E");
         
         $username = str_replace($no_permitidas, $permitidas ,$username);
+        $estado = 1;
+        $fkrol = 1;
+        if(!is_null(Auth::user()))
+        {
+            switch(Auth::user()->fkrol)
+            {
+                case 1:
+                    $fkrol = 2;
+                    $estado = 1;
+                break;
+                case 2: 
+                case 3:
+                    $estado = 0;
+                    $fkrol = 3;
+                break;
+            }
+        }
 
         $insert = new User();
         $insert->username = $username;
         $insert->email = $data->email;
         $insert->fkpersona = $data->id;
+        $insert->fkrol = $fkrol;
         $insert->password = \bcrypt($username);
+        $insert->estado = $estado;
         if($insert->save())
         {
             $this->enviarEmail($data->email, $nombre_completo, $username);

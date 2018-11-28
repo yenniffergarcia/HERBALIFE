@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Mes extends Model
+class Rol extends Model
 {
-    protected $table = 'mes';
+    protected $table = 'rol';
 	protected $guarded = ['id'];
-    protected $fillable = ['mes'];  
+    protected $fillable = ['nombre']; 
 }

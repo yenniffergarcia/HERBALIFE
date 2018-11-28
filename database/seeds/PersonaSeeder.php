@@ -15,7 +15,7 @@ class PersonaSeeder extends Seeder
         $data->direccion = 'Chiquimulilla';
         $data->id_padre = 0;
         $data->email = 'admin@gmail.com';
-        $data->codigo = 'HER-000001';
+        $data->codigo = 'HER-0000001';
         $data->fkdepartamento = 3;
         $data->save();
     }

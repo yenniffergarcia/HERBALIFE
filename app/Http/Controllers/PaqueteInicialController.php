@@ -8,6 +8,7 @@ use Yajra\Datatables\Datatables;
 use Validator;
 use Response;
 use App\PaqueteInicial;
+use App\PaqueteProducto;
 
 class PaqueteInicialController extends Controller
 {
@@ -21,6 +22,12 @@ class PaqueteInicialController extends Controller
         'nombre' => 'required|max:75|unique:paquete_inicial',                                  
     ];
 
+    protected $verificar_insert_producto =
+    [
+        'fkproducto' => 'required|integer', 
+        'fkpaquete' => 'required|integer',                                     
+    ];    
+
     public function index()
     {
         return view('mantenimiento.paqueteinicial.index');
@@ -31,7 +38,24 @@ class PaqueteInicialController extends Controller
         $query = paqueteinicial::where('estado', 1)->select(['id','nombre']);
 
         return Datatables::of($query)
+            ->addColumn('puntos', function ($data) {
+                $punteo = 0;
+          
+                $buscar = PaqueteProducto::join('producto', 'paquete_producto.fkproducto', 'producto.id')
+                    ->where('fkpaquete', $data->id)->where('paquete_producto.estado', 1)
+                    ->select('punto')->get();
+
+                foreach($buscar as $value)
+                {
+                    $punteo = $value->punto + $punteo;
+                }
+
+                return $punteo;
+            })        
             ->addColumn('action', function ($data) {
+                
+                $btn_producto = '<button class="agregar-modal btn btn-success btn-xs" 
+                type="button" data-id="'.$data->id.'">Producto</button>';
 
                 $btn_estado = '<button class="delete-modal btn btn-danger btn-xs" 
                 type="button" data-id="'.$data->id.'">Eliminar</button>';
@@ -40,11 +64,35 @@ class PaqueteInicialController extends Controller
                 btn-xs" type="button" data-id="'.$data->id.'" 
                 data-nombre="'.$data->nombre.'">Editar</button>';           
 
-                return $btn_edit.'  '.$btn_estado;
+                return $btn_edit.'  '.$btn_producto.'  '.$btn_estado;
             })                  
             ->editColumn('id', 'ID: {{$id}}')       
             ->make(true);
     }
+
+    public function getdataproducto($paquete)
+    {
+        $query = PaqueteProducto::join('producto', 'paquete_producto.fkproducto', 'producto.id')
+        ->join('categoria', 'producto.fkcategoria', 'categoria.id')
+        ->where('paquete_producto.fkpaquete', $paquete)
+        ->where('paquete_producto.estado', 1)
+        ->select(['paquete_producto.id as id', 'descripcion', 'punto', 'precio', 
+        'producto.nombre as producto', 'categoria.nombre as categoria']);
+
+        return Datatables::of($query)
+            ->addColumn('producto', function ($data) {
+                return $data->categoria.' / '.$data->producto;
+            })         
+            ->addColumn('action', function ($data) {
+                
+                $btn_estado = '<button class="delete-producto-modal btn btn-danger btn-xs" 
+                type="button" data-id="'.$data->id.'">Eliminar</button>';         
+
+                return $btn_estado;
+            })                  
+            ->editColumn('id', 'ID: {{$id}}')       
+            ->make(true);
+    }    
 
     public function buscar(Request $request, $id)
     {
@@ -72,6 +120,21 @@ class PaqueteInicialController extends Controller
             return response()->json($data);
         } 
     }
+
+    public function storeProducto(Request $request)
+    {
+        $validator = Validator::make(Input::all(), $this->verificar_insert_producto);
+        
+        if ($validator->fails()) {
+            return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+        } else {
+            $data = new PaqueteProducto;
+            $data->fkproducto = $request->fkproducto;
+            $data->fkpaquete = $request->fkpaquete;
+            $data->save();
+            return response()->json($data);
+        } 
+    }    
 
     public function show($id)
     {
@@ -105,10 +168,31 @@ class PaqueteInicialController extends Controller
         if($request->ajax()){
             $data = paqueteinicial::findOrFail($request->id);
             $data->estado = 0;
-            $data->save();
+            if($data->save())
+            {
+                $buscar = PaqueteProducto::where('fkpaquete', $request->id)->select('id')->get();
+
+                foreach($buscar as $value)
+                {
+                    $eliminar = PaqueteProducto::findOrFail($value->id);
+                    $eliminar->estado = 0;
+                    $eliminar->save();
+                }
+            }
             return response()->json($data);
         }        
     } 
+
+    public function estadoProducto(Request $request)
+    {
+        if($request->ajax())
+        {
+            $data = PaqueteProducto::findOrFail($request->id);
+            $data->estado = 0;
+            $data->save();
+            return response()->json($data);
+        }        
+    }     
 
     public function destroy($id)
     {
