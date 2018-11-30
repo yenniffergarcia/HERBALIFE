@@ -13,6 +13,8 @@ class CreateTablaFacturasTable extends Migration
             $table->date('fecha');
             $table->decimal('subtotal', 10,2);
             $table->decimal('total', 10,2);
+            $table->boolean('estado')->default(1);
+            $table->boolean('pagado')->default(0);
 
             $table->string('fkcodigo', 10);            
             $table->unsignedInteger('fkpersona');

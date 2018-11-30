@@ -12,10 +12,3 @@ npm-debug.log
 yarn-error.log
 .phpunit.result.cache
 .env
-app/Http/Controllers/ProfesionController.php
-app/Http/Controllers/ProfesionController.php
-composer.lock
-composer.lock
-composer.lock
-*.lock
-composer.lock

@@ -4,14 +4,13 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTablaDetalleVentasTable extends Migration
+class CreateTablaPedidoAceptadoTable extends Migration
 {
     public function up()
     {
-        Schema::create('detalle_venta', function (Blueprint $table) {
+        Schema::create('pedido_aceptado', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('cantidad');
-            $table->boolean('estado')->default(1);
 
             $table->unsignedInteger('fkstock');
             $table->unsignedInteger('fkpedido');
@@ -25,6 +24,6 @@ class CreateTablaDetalleVentasTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('detalle_venta');
+        Schema::dropIfExists('pedido_aceptado');
     }
 }

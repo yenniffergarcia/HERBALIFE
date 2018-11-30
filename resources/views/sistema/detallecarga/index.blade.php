@@ -33,7 +33,7 @@
                                         <th width="11%">Precio</th>
                                         <th width="11%">Precio Total</th>
                                         <th width="11%">Punteo</th>
-                                        <th width="11%">Punteo Total</th>                                        
+                                        <th width="11%">Punteo Total</th>
                                         <th width="10%">Fecha V.</th>
                                         <th width="15%">Opciones</th>
                                     </tr>

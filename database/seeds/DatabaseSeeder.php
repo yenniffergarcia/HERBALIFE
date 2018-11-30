@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
         $this->call(NivelSeeder::class);  
         $this->call(PaqueteInicialSeeder::class);
         $this->call(PersonaSeeder::class);
-        $this->call(ProductoSeeder::class);
-        $this->call(TelefonoSeeder::class);                                      
+        $this->call(ProductoSeeder::class);                                   
     }
 }
