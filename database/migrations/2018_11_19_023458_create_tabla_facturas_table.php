@@ -18,7 +18,7 @@ class CreateTablaFacturasTable extends Migration
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkpersonivel');
 
-            $table->foreign('fkcodigo')->references('id')->on('persona')->onUpdate('cascade');
+            $table->foreign('fkcodigo')->references('codigo')->on('persona')->onUpdate('cascade');
             $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
             $table->foreign('fkpersonivel')->references('id')->on('persona_nivel')->onUpdate('cascade');
             $table->timestamps();

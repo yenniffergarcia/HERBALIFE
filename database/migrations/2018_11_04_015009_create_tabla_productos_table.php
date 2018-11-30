@@ -17,7 +17,7 @@ class CreateTablaProductosTable extends Migration
             $table->boolean('estado')->default(1); 
 
             $table->unsignedInteger('fkcategoria');
-            $table->foreign('fkcategoria')->references('id')->on('categorias')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('fkcategoria')->references('id')->on('categoria')->onUpdate('cascade');
             
             $table->timestamps();
         });
