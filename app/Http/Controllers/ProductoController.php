@@ -17,8 +17,8 @@ class ProductoController extends Controller
         $this->middleware('auth');
         //$this->middleware('admin');
         $this->middleware('gerente');
-        $this->middleware('asociado_interno');
-        $this->middleware('asociado_externo');
+        $this->middleware('asociado_interno', ['only' => ['index']]);
+        $this->middleware('asociado_externo', ['only' => ['index']]);
     }
         
     protected $verificar_insert =

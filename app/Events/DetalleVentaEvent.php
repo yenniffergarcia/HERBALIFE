@@ -12,7 +12,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use App\DetalleVenta;
 use App\Stock;
 use App\Factura;
-use App\PersonaNivel;
 use Auth;
 
 class DetalleVentaEvent

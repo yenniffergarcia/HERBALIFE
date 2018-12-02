@@ -20,10 +20,10 @@ class DetalleVentaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        //$this->middleware('admin');
-        //$this->middleware('gerente');
-        $this->middleware('asociado_interno');
-        $this->middleware('asociado_externo');
+        $this->middleware('admin');
+        $this->middleware('gerente');
+        //$this->middleware('asociado_interno');
+        //$this->middleware('asociado_externo');
     }
 
     protected $verificar_insert =
@@ -247,7 +247,16 @@ class DetalleVentaController extends Controller
         if($request->ajax()){
             $data = detalleventa::findOrFail($request->id);
             $data->estado = 0;
-            $data->save();
+            if($data->save())
+            {
+                $aun_tiene = DetalleVenta::where('fkpedido', $data->fkpedido)->where('estado', 1)->first();
+                if(is_null($aun_tiene))
+                {
+                    $data = factura::findOrFail($data->fkpedido);
+                    $data->estado = 0;
+                    $data->save();
+                }
+            }
             return response()->json($data);
         }        
     }

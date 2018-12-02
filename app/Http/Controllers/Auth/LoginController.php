@@ -28,7 +28,7 @@ class LoginController extends Controller
 
 		if($ultimo_dia == date('d'))
 		{
-			$personas = Persona::where('id_padre', !=, 0)->get();
+			$personas = Persona::where('id_padre', '!=', 0)->where('estado', 1)->get();
 
 			foreach ($personas as $persona) 
 			{

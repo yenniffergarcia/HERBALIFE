@@ -154,7 +154,7 @@ class PersonaNivelEvent
         $sumatoria = 0;
         $sumar = 0;
         $persona = Persona::find($data->fkpersona);
-        $acumulacion_red = PedidoAceptado::jon('stock', 'pedido.fkstock', 'stock.id')
+        $acumulacion_red = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
             ->join('producto', 'stock.fkproducto', 'producto.id')
             ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
             ->where('pedido.fkpersona', $persona->id_padre)
@@ -171,7 +171,7 @@ class PersonaNivelEvent
         if($sumatoria > 49999 && $sumatoria < 80001)
         {
             $id = 1;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 
@@ -195,7 +195,7 @@ class PersonaNivelEvent
         if($sumatoria > 79999 && $sumatoria < 200001)
         {
             $id = 2;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 
@@ -219,7 +219,7 @@ class PersonaNivelEvent
         if($sumatoria > 199999)
         {
             $id = 3;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 
@@ -247,7 +247,7 @@ class PersonaNivelEvent
         $sumatoria = 0;
         $sumar = 0;
         $persona = Persona::find($data->fkpersona);
-        $acumulacion_red = PedidoAceptado::jon('stock', 'pedido.fkstock', 'stock.id')
+        $acumulacion_red = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
             ->join('producto', 'stock.fkproducto', 'producto.id')
             ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
             ->where('pedido.fkpersona', $persona->id_padre)
@@ -264,7 +264,7 @@ class PersonaNivelEvent
         if($sumatoria > 49999 && $sumatoria < 80001)
         {
             $id = 1;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 
@@ -288,7 +288,7 @@ class PersonaNivelEvent
         if($sumatoria > 79999 && $sumatoria < 200001)
         {
             $id = 2;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 
@@ -312,7 +312,7 @@ class PersonaNivelEvent
         if($sumatoria > 199999)
         {
             $id = 3;
-            $equipo = EquipoExpansion::($id);
+            $equipo = EquipoExpansion::find($id);
             $existe_bonificacion = Bonificacion::where('fkpersona', $persona->id_padre)
                 ->where('fkequipo_expansion', $id)->where('fkmes', date('n'))->where('anio', date('Y'))->first();
 

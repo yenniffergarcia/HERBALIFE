@@ -4,8 +4,7 @@
 
 @section('content_header')
     <div class="content-header">
-        <h1>Persona  <button class="add-modal btn btn-primary btn-xs" 
-        type="button">Nuevo</button></h1>                    
+        <h1>Persona  {!! $button !!}</h1>                    
     </div>    
 @stop
 

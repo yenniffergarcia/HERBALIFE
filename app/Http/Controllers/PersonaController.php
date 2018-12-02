@@ -13,6 +13,7 @@ use App\User;
 use App\PaqueteInicial;
 use App\PaqueteProducto;
 use App\PaqueteInicialPersona;
+use App\PersonaNivel;
 use Auth;
 
 class PersonaController extends Controller
@@ -22,8 +23,8 @@ class PersonaController extends Controller
         $this->middleware('auth');
         $this->middleware('admin', ['only' => ['index']]);
         $this->middleware('gerente', ['only' => ['indexAdmin']]);
-        $this->middleware('asociado_interno', ['only' => ['index', 'indexAdmin']]);
-        $this->middleware('asociado_externo', ['only' => ['index', 'indexAdmin']]);
+        $this->middleware('asociado_interno', ['only' => ['indexAdmin']]);
+        $this->middleware('asociado_externo', ['only' => ['indexAdmin']]);
     }
 
     protected $verificar_insert =
@@ -46,7 +47,38 @@ class PersonaController extends Controller
 
     public function index()
     {
-        return view('sistema.persona.index');
+        $button = '';
+
+        switch (Auth::user()->fkrol) {
+            case 2:
+                # code...
+ 
+                break;
+ 
+            case 3:
+                
+                $ancestro = Persona::find(Auth::user()->fkpersona);
+                $rol_ancestro = User::find($ancestro->id_padre);
+
+                if($rol_ancestro->fkrol == 2)
+                {
+                    $button = '<button class="add-modal btn btn-primary btn-xs" type="button">Nuevo</button>';
+                }
+                else
+                {
+                    $nivel = PersonaNivel::where('fkpersona', Auth::user()->fkpersona)
+                        ->where('fknivel', 4)->where('estado', 1)->first();
+
+                    if(!is_null($nivel))
+                    {
+                        $button = '<button class="add-modal btn btn-primary btn-xs" type="button">Nuevo</button>';
+                    }
+                }
+
+                break;
+        }
+
+        return view('sistema.persona.index', compact('button'));
     }
 
     public function indexAdmin()

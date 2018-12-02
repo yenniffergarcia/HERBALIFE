@@ -36,9 +36,10 @@ class PaqueteInicialPersonaEvent
         $mes = Mes::where('mes', $mes_actual)->first();
         $fecha = User::where('fkpersona', Auth::user()->fkpersona)->first();
 
+        $paquete = PaqueteProducto::find($data->fkpaquete_producto);
         $punto_producto = PaqueteProducto::join('producto', 'paquete_producto.fkproducto', 'producto.id')
             ->where('paquete_producto.estado', 1)
-            ->where('paquete_producto.id', $data->fkpaquete_producto)
+            ->where('paquete_producto.fkpaquete', $paquete->fkpaquete)
             ->select('punto')->get();
 
         foreach($punto_producto as $value)
@@ -63,15 +64,21 @@ class PaqueteInicialPersonaEvent
 
         if(Auth::user()->fkrol != 1)
         {
-            $insert = new PersonaNivel;
-            $insert->fkpersona = $data->fkpersona;
-            $insert->fknivel = 1;
-            if($insert->save())
+            $existe = PersonaNivel::where('fkpersona', $data->fkpersona)
+                ->where('fknivel', 1)->first();
+
+            if(is_null($existe))
             {
-                $update = User::findOrFail($persona->id);
-                $update->estado = 1;
-                $update->save();
-            }            
+                $insert = new PersonaNivel;
+                $insert->fkpersona = $data->fkpersona;
+                $insert->fknivel = 1;
+                if($insert->save())
+                {
+                    $update = User::findOrFail($persona->id);
+                    $update->estado = 1;
+                    $update->save();
+                } 
+            }           
         }        
     }   
 

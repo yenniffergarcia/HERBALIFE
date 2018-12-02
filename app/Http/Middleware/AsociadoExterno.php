@@ -17,11 +17,11 @@ class AsociadoExterno
         if(Auth::user()->fkrol == 3 && $rol->fkrol != 2)
         {
             flash('¡Sin Privilegios!')->error()->important();
-            return redirect()->to('/');
+            return redirect()->to('/');              
         }
         else
         {
-            return $next($request);
+            return $next($request);          
         }
     }
 }
