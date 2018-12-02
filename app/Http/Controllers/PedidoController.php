@@ -14,6 +14,7 @@ use App\User;
 use App\PedidoAceptado;
 use App\PersonaNivel;
 use Auth;
+use App\PuntoMes;
 
 class PedidoController extends Controller
 {
@@ -28,6 +29,10 @@ class PedidoController extends Controller
 
     public function index()
     {
+        $prueba = PuntoMes::where('fkpersona',4)
+                        ->orderby('punto_mes.id','DESC')->take(2)->get();
+
+                        
         $button = '';
 
         $persona_session = Persona::find(Auth::user()->fkpersona);
@@ -84,7 +89,7 @@ class PedidoController extends Controller
                 $pedido_aceptado = '';
 
                 $aceptados = PedidoAceptado::where('fkpedido', $data->id)->get();
-                $solictados = DetalleVenta::where('fkpedido', $data->id)->get();
+                $solictados = DetalleVenta::where('fkpedido', $data->id)->where('estado', 1)->get();
                 
                 if(count($solictados) > 0)
                 {
@@ -147,7 +152,7 @@ class PedidoController extends Controller
                 $pedido_aceptado = '';
 
                 $aceptados = PedidoAceptado::where('fkpedido', $data->id)->get();
-                $solictados = DetalleVenta::where('fkpedido', $data->id)->get();
+                $solictados = DetalleVenta::where('fkpedido', $data->id)->where('estado', 1)->get();
                 
                 if(count($aceptados) != count($solictados))
                 {
@@ -201,8 +206,7 @@ class PedidoController extends Controller
             $data->fkpersonivel = $nivel->id;
             $data->fecha = date("Y-m-d");       
             $data->subtotal = 0.00;
-            $data->total =  0.00;
-            $data->total =  0.00;                
+            $data->total =  0.00;              
             $data->save();
             return response()->json($data);
         }

@@ -14,6 +14,8 @@ use App\PaqueteInicial;
 use App\PaqueteProducto;
 use App\PaqueteInicialPersona;
 use App\PersonaNivel;
+use App\Telefono;
+use App\Compania;
 use Auth;
 
 class PersonaController extends Controller
@@ -39,6 +41,13 @@ class PersonaController extends Controller
         'fkdepartamento' => 'required|integer',  
     ];
 
+    protected $verificar_insert_telefono =
+    [
+        'numero' => 'numeric|required|unique:telefono|digits:8',
+        'fkpersona' => 'required|integer',
+        'fkcompania' => 'required|integer', 
+    ];    
+
     protected $verificar_insert_paquete_persona =
     [ 
         'fkpersona' => 'required|integer',                      
@@ -51,8 +60,7 @@ class PersonaController extends Controller
 
         switch (Auth::user()->fkrol) {
             case 2:
-                # code...
- 
+                $button = '<button class="add-modal btn btn-primary btn-xs" type="button">Nuevo</button>';
                 break;
  
             case 3:
@@ -153,6 +161,7 @@ class PersonaController extends Controller
                 $btn_paquete = '';
                 $btn_estado = '';
                 $btn_edit = '';
+                $btn_telefono = '';
 
                 $exite = PaqueteInicialPersona::where('fkpersona', $data->id)->first();
                 $usuario = User::where('fkpersona', $data->id)->first();
@@ -167,6 +176,9 @@ class PersonaController extends Controller
                 {
                     $btn_estado = '<button class="delete-modal btn btn-danger btn-xs" 
                     type="button" data-id="'.$data->id.'">Eliminar</button>';
+
+                    $btn_telefono = '<button class="telefono-modal btn btn-success btn-xs" 
+                    type="button" data-id="'.$data->id.'">Telefono</button>';
     
                     $btn_edit = '<button class="edit-modal btn btn-warning 
                     btn-xs" type="button" data-id="'.$data->id.'" 
@@ -177,11 +189,29 @@ class PersonaController extends Controller
                     data-fkdepartamento="'.$data->fkdepartamento.'" data-email="'.$data->email.'">Editar</button>';               
                 }
 
-                return $btn_edit.'  '.$btn_estado.'  '.$btn_paquete;
+                return $btn_edit.'  '.$btn_estado.'  '.$btn_paquete.'  '.$btn_telefono;
             })                  
             ->editColumn('id', 'ID: {{$id}}')       
             ->make(true);
     }
+
+    public function getdataTelefono($persona)
+    {
+        $query = telefono::join('compania', 'telefono.fkcompania' ,'compania.id')
+            ->where('telefono.fkpersona', $persona)
+            ->select(['telefono.id as id', 'compania.nombre as compania', 'numero']);
+
+        return Datatables::of($query)                      
+            ->addColumn('action', function ($data) {
+
+                $btn_estado = '<button class="delete-telefono-modal btn btn-danger btn-xs" 
+                    type="button" data-id="'.$data->id.'">Eliminar</button>';
+
+                return $btn_estado;
+            })                  
+            ->editColumn('id', 'ID: {{$id}}')       
+            ->make(true);
+    }    
 
     public function buscar(Request $request, $id)
     {
@@ -197,7 +227,15 @@ class PersonaController extends Controller
             $data = departamento::where('estado', 1)->select('departamento.*')->get();
             return response()->json($data);
         }        
-    }  
+    } 
+
+    public function dropCompania(Request $request)
+    {
+        if($request->ajax()){
+            $data = compania::where('estado', 1)->select('compania.*')->get();
+            return response()->json($data);
+        }        
+    }     
     
     public function dropPaqueteIncial(Request $request)
     {
@@ -263,6 +301,22 @@ class PersonaController extends Controller
             return response()->json($data);
         } 
     }
+
+    public function storeTelefono(Request $request)
+    {
+        $validator = Validator::make(Input::all(), $this->verificar_insert_telefono);
+        
+        if ($validator->fails()) {
+            return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
+        } else {
+            $data = new Telefono;
+            $data->fkpersona = $request->fkpersona;
+            $data->fkcompania = $request->fkcompania;   
+            $data->numero = $request->numero;  
+            $data->save();                    
+            return response()->json($data);
+        } 
+    }    
 
 
     public function show($id)
@@ -340,7 +394,16 @@ class PersonaController extends Controller
             }
             return response()->json($data);
         }        
-    }     
+    } 
+
+    public function eliminarTelefono(Request $request)
+    {
+        if($request->ajax()){
+            $data = telefono::findOrFail($request->id);
+            $data->delete();
+            return response()->json($data);
+        }        
+    }        
 
     public function destroy($id)
     {

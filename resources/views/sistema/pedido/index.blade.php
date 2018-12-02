@@ -52,7 +52,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title-producto-pedido"></h4>
+                    <h4 class="modal-title-detalle"></h4>
                 </div>
 
                 <div class="modal-body">
@@ -109,6 +109,83 @@
             </div>
         </div>
     </div>    
+
+
+    <!-- Modal Mostrar Detalle Historico -->
+    <div id="mostrarDetalleHistorico" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title-detalle"></h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <br>
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-bordered table-hover dataTable" id="info-detalle-historico" width="100%">
+                                        <thead >
+                                            <tr>
+                                                <th width="10%">Cantidad</th>
+                                                <th width="25%">Producto</th>
+                                                <th width="10%">Precio</th>
+                                                <th width="10%">Precio Total</th>
+                                                <th width="10%">Puntos</th>
+                                                <th width="15%">Puntos Total</th>
+                                                <th width="10%">Fecha</th>
+                                                <th width="10%">Estado</th>
+                                            </tr>
+                                        </thead>
+                                    </table> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>  
+
+
+    <!-- Modal Mostrar Detalle Historico Aceptado -->
+    <div id="mostrarDetallaHistoricoAceptado" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title-aceptado"></h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="box">
+                                <br>
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-bordered table-hover dataTable" id="info-detalle-historico-aceptado" width="100%">
+                                        <thead >
+                                            <tr>
+                                                <th width="10%">Cantidad</th>
+                                                <th width="35%">Producto</th>
+                                                <th width="10%">Precio</th>
+                                                <th width="10%">Precio Total</th>
+                                                <th width="10%">Puntos</th>
+                                                <th width="15%">Puntos Total</th>
+                                                <th width="10%">Fecha</th>
+                                            </tr>
+                                        </thead>
+                                    </table> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>     
 
 
     <!-- AJAX CRUD operations -->
@@ -217,8 +294,65 @@
             },
         });           
 
+    });   
+
+    // ------ Ver Historicos del Pedido en Detalle Venta y Productos Aceptados
+
+    $(document).on('click', '.detalle-modal', function() {
+        $('.modal-title-detalle').text('Productos solicitados en el Pedido #'+$(this).data('id'));
+        let ruta_original = null;
+        ruta_original = "{{ route('getdataHistorico.DetalleVenta', ['pedido' => 'ids']) }}";
+        var ruta_consulta = ruta_original.replace('ids', $(this).data('id'));
+
+        $('#info-detalle-historico').DataTable({ 
+            destroy: true,   
+            processing: true,
+            serverSide: false,
+            paginate: true,
+            searching: true,
+            ajax: ruta_consulta,
+            columns: [
+                { data: 'cantidad', name: 'cantidad' },  
+                { data: 'nombre', name: 'nombre' },   
+                { data: 'precio', name: 'precio' }, 
+                { data: 'total_precio', name: 'total_precio' }, 
+                { data: 'punto', name: 'punto' }, 
+                { data: 'total_punto', name: 'total_punto' }, 
+                { data: 'fecha', name: 'fecha' },                                 
+                { data: 'vista', name: 'vista'}
+            ]
+        });
+
+        $('#mostrarDetalleHistorico').modal('show');
     });    
 
+
+    $(document).on('click', '.aceptado-modal', function() {
+        $('.modal-title-aceptado').text('Productos aceptados en el Pedido #'+$(this).data('id'));
+        let ruta_original = null;
+        ruta_original = "{{ route('getaceptado.DetalleVenta', ['pedido' => 'ids']) }}";
+        var ruta_consulta = ruta_original.replace('ids', $(this).data('id'));
+
+        $('#info-detalle-historico-aceptado').DataTable({ 
+            destroy: true,   
+            processing: true,
+            serverSide: false,
+            paginate: true,
+            searching: true,
+            ajax: ruta_consulta,
+            columns: [
+                { data: 'cantidad', name: 'cantidad' },  
+                { data: 'nombre', name: 'nombre' },   
+                { data: 'precio', name: 'precio' }, 
+                { data: 'total_precio', name: 'total_precio' }, 
+                { data: 'punto', name: 'punto' }, 
+                { data: 'total_punto', name: 'total_punto' }, 
+                { data: 'fecha', name: 'fecha' },                                 
+            ]
+        });
+
+        $('#mostrarDetallaHistoricoAceptado').modal('show');
+    });
 
 
     // ------- Agregar productos al Pedido -------------
@@ -227,10 +361,9 @@
 
     function tablaDetalle(id) 
     {
-
         let ruta_original = null;
-        ruta_original = "{{ route('getdata.DetalleVenta', ['pedido' => 'id']) }}";
-        var ruta_consulta = ruta_original.replace('id', id);
+        ruta_original = "{{ route('getdata.DetalleVenta', ['pedido' => 'ids']) }}";
+        var ruta_consulta = ruta_original.replace('ids', id);
 
         $('#info-detalle').DataTable({ 
             destroy: true,   

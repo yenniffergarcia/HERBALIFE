@@ -28,45 +28,99 @@ class PersonaNivelEvent
 
     public function created_verificarnivel(PuntoMes $data)
     {
+        $suma_dos_meses = 0;
+        $suma_doce_meses = 0;
+
+        $dos_meses = PuntoMes::where('fkpersona', $data->fkpersona)
+            ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
+            ->select('punto')->orderby('punto_mes.id','DESC')->take(2)->get();     
+            
+        foreach ($dos_meses as $valor) 
+        {
+            $suma_dos_meses = $suma_dos_meses + $valor->punto;
+        }
+
+        $doce_meses = PuntoMes::where('fkpersona', $data->fkpersona)
+            ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
+            ->select('punto')->orderby('punto_mes.id','DESC')->take(12)->get();     
+            
+        foreach ($doce_meses as $valor) 
+        {
+            $suma_doce_meses = $suma_doce_meses + $valor->punto;
+        }        
+
         if($data->punto > 499 && $data->punto < 2501)
         {
             $this->cambiar_estado_nive($data, 1, 2);
         }
-        if($data->punto > 2499 && $data->punto < 4001)
+        if(count($dos_meses)>0)
         {
-            $this->cambiar_estado_nive($data, 2, 3);            
-        }   
-        if($data->punto > 3999)
+            if($suma_dos_meses > 2499 && $suma_dos_meses < 4001)
+            {
+                $this->cambiar_estado_nive($data, 2, 3);            
+            }               
+        }
+        if(count($doce_meses)>0)
         {
-            $this->cambiar_estado_nive($data, 3, 4);             
-        }             
+            if($suma_doce_meses->punto > 3999)
+            {
+                $this->cambiar_estado_nive($data, 3, 4);             
+            }                 
+        }           
     }    
 
     public function update_verificarnivel(PuntoMes $data)
     {
+        $suma_dos_meses = 0;
+        $suma_doce_meses = 0;
+
+        $dos_meses = PuntoMes::where('fkpersona', $data->fkpersona)
+            ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
+            ->select('punto')->orderby('punto_mes.id','DESC')->take(2)->get();     
+            
+        foreach ($dos_meses as $valor) 
+        {
+            $suma_dos_meses = $suma_dos_meses + $valor->punto;
+        }
+
+        $doce_meses = PuntoMes::where('fkpersona', $data->fkpersona)
+            ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
+            ->select('punto')->orderby('punto_mes.id','DESC')->take(12)->get();     
+            
+        foreach ($doce_meses as $valor) 
+        {
+            $suma_doce_meses = $suma_doce_meses + $valor->punto;
+        }        
+
         if($data->punto > 499 && $data->punto < 2501)
         {
             $this->cambiar_estado_nive($data, 1, 2);
         }
-        if($data->punto > 2499 && $data->punto < 4001)
+        if(count($dos_meses)>0)
         {
-            $this->cambiar_estado_nive($data, 2, 3);            
-        }   
-        if($data->punto > 3999)
-        {
-            $this->cambiar_estado_nive($data, 3, 4);             
+            if($suma_dos_meses > 2499 && $suma_dos_meses < 4001)
+            {
+                $this->cambiar_estado_nive($data, 2, 3);            
+            }               
         }
+        if(count($doce_meses)>0)
+        {
+            if($suma_doce_meses->punto > 3999)
+            {
+                $this->cambiar_estado_nive($data, 3, 4);             
+            }                 
+        }    
     }   
 
     public function cambiar_estado_nive($data, $numero_actual, $numero_nuevo)
     {
+        $suma = 0;
         switch ($numero_nuevo) 
         {
             case 3:
-                    $puntos = PuntoMes::where('fkmes', date('n'))
-                        ->where('fkpersona', $persona->id)
+                    $puntos = PuntoMes::where('fkpersona', $data->fkpersona)
                         ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
-                        ->orderby('fkmes','DESC')->take(2)->get();     
+                        ->select('punto')->orderby('punto_mes.id','DESC')->take(2)->get();     
                         
                     foreach ($puntos as $valor) 
                     {
@@ -85,10 +139,23 @@ class PersonaNivelEvent
                             $update->estado = 0;
                             if($update->save())
                             {
-                                $insert = new PersonaNivel;
-                                $insert->fkpersona = $data->fkpersona;
-                                $insert->fknivel = $numero_nuevo;
-                                $insert->save();
+                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
+                                                            ->where('fknivel', $numero_nuevo)
+                                                            ->select('id')->first();                                
+                                
+                                if(!is_null($cambiar_nivel))
+                                {
+                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
+                                    $update->estado = 1; 
+                                    $update->save();                                      
+                                }
+                                else
+                                {
+                                    $insert = new PersonaNivel;
+                                    $insert->fkpersona = $data->fkpersona;
+                                    $insert->fknivel = $numero_nuevo;
+                                    $insert->save();
+                                }
                             }
                         } 
 
@@ -96,10 +163,9 @@ class PersonaNivelEvent
                 break;
 
             case 4:
-                    $puntos = PuntoMes::where('fkmes', date('n'))
-                        ->where('fkpersona', $persona->id)
+                    $puntos = PuntoMes::where('fkpersona', $data->fkpersona)
                         ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
-                        ->orderby('fkmes','DESC')->take(12)->get();     
+                        ->select('punto')->orderby('punto_mes.id','DESC')->take(12)->get();          
                         
                     foreach ($puntos as $valor) 
                     {
@@ -118,10 +184,23 @@ class PersonaNivelEvent
                             $update->estado = 0;
                             if($update->save())
                             {
-                                $insert = new PersonaNivel;
-                                $insert->fkpersona = $data->fkpersona;
-                                $insert->fknivel = $numero_nuevo;
-                                $insert->save();
+                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
+                                                            ->where('fknivel', $numero_nuevo)
+                                                            ->select('id')->first();                                
+                                
+                                if(!is_null($cambiar_nivel))
+                                {
+                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
+                                    $update->estado = 1; 
+                                    $update->save();                                      
+                                }
+                                else
+                                {
+                                    $insert = new PersonaNivel;
+                                    $insert->fkpersona = $data->fkpersona;
+                                    $insert->fknivel = $numero_nuevo;
+                                    $insert->save();
+                                }
                             }
                         } 
                                     
@@ -139,10 +218,23 @@ class PersonaNivelEvent
                         $update->estado = 0;
                         if($update->save())
                         {
-                            $insert = new PersonaNivel;
-                            $insert->fkpersona = $data->fkpersona;
-                            $insert->fknivel = $numero_nuevo;
-                            $insert->save();
+                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
+                                                            ->where('fknivel', $numero_nuevo)
+                                                            ->select('id')->first();                                
+                                
+                                if(!is_null($cambiar_nivel))
+                                {
+                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
+                                    $update->estado = 1; 
+                                    $update->save();                                   
+                                }
+                                else
+                                {
+                                    $insert = new PersonaNivel;
+                                    $insert->fkpersona = $data->fkpersona;
+                                    $insert->fknivel = $numero_nuevo;
+                                    $insert->save();
+                                }
                         }
                     } 
                 break;

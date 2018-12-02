@@ -20,6 +20,8 @@ class CreateTablaBonificacionesTable extends Migration
             $table->foreign('fkmes')->references('id')->on('mes')->onUpdate('cascade');
             $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
             $table->foreign('fkequipo_expansion')->references('id')->on('equipo_expansion')->onUpdate('cascade');
+
+            $table->timestamps();
         });
     }
 

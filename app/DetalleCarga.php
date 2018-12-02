@@ -16,12 +16,10 @@ class DetalleCarga extends Model
 	    parent::boot();
 
 	    static::created(function($data) {
-            Event::fire('detallecarga.created', $data);
             Event::fire('stock_carga.created', $data);
         });
         
 	    static::updated(function($data) {
-            Event::fire('detallecarga.updated', $data);
             Event::fire('stock_carga.updated', $data);
 	    });        
 	}     

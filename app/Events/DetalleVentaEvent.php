@@ -58,8 +58,8 @@ class DetalleVentaEvent
         $total = $stock->precio * $data->cantidad;
 
         $update = Factura::findOrFail($data->fkpedido);
-        $update->subtotal = $sub_total - $update->subtotal;
-        $update->total = $total - $update->total;
+        $update->subtotal = $update->subtotal - $sub_total;
+        $update->total = $update->total - $total;
         $update->save();
     }  
 

@@ -181,6 +181,67 @@
     </div>       
 
 
+
+    <!-- Modal Agregar Producto Paquete -->
+    <div id="addTelefonoPersona" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title-telefono"></h4>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">                     
+                        <div class="col-sm-6">
+                            <label for="fkcompania">Compania</label>
+                            <select id="fkcompania" class="form-control"></select>
+                            <p class="erroFKCompania text-center alert alert-danger hidden"></p>
+                        </div>                                                                                     
+                        <div class="col-sm-6">
+                            <label for="numero">Numero</label>
+                            <input type="text" id="numero" class="form-control">
+                            <p class="erroNumero text-center alert alert-danger hidden"></p>
+                        </div> 
+                    </form>
+                </div>
+                <div class="row"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary add-telefono" data-dismiss="modal">
+                        <span id="" class='fa fa-save'></span>
+                    </button>
+                    <button type="button" class="btn btn-danger pull-left" data-dismiss="modal">
+                        <span class='fa fa-ban'></span>
+                    </button>
+                </div>
+                <div class="row"></div>
+
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="box">
+                                <br>
+                                <div class="box-body table-responsive no-padding">
+                                    <table class="table table-bordered table-hover dataTable" id="info-table-telefono" width="100%">
+                                        <thead >
+                                            <tr>
+                                                <th width="50%">Compania</th>
+                                                <th width="35%">Telefono</th>
+                                                <th width="15%">Opciones</th>
+                                            </tr>
+                                        </thead>
+                                    </table> 
+                                </div>
+                            </div>
+                        </div>                                     
+                    </div>
+                </div>                
+
+            </div>
+        </div>
+    </div>     
+
+
     <!-- AJAX CRUD operations -->
     <script type="text/javascript">
     var id = 0;
@@ -565,6 +626,135 @@
             });
         } 
     });
+
+    // ---------- Agrear Numero de Telefono a la Persona
+    var telefono = 0;
+
+    function tablaTelefono(id) 
+    {
+        let ruta_original = null;
+        ruta_original = "{{ route('getdataTelefono.Persona', ['persona' => 'ids']) }}";
+        var ruta_consulta = ruta_original.replace('ids', id);
+
+        $('#info-table-telefono').DataTable({ 
+            destroy: true,   
+            processing: true,
+            serverSide: false,
+            paginate: true,
+            searching: true,
+            ajax: ruta_consulta,
+            columns: [
+                { data: 'compania', name: 'compania' },  
+                { data: 'numero', name: 'numero' },                        
+                { data: 'action', name: 'action', orderable: false, searchable: false}
+            ]
+        });
+    }  
+
+    function dropCompania() 
+    {
+        $.get("/drop/compania", function(response) {
+            $('#fkcompania').empty();
+            $('#fkcompania').append('<option value="" selected>Seleccionar Uno</option>');
+            
+            for(i=0; i < response.length; i++)
+            {
+                $('#fkcompania').append('<option value="'+response[i].id+'">'+response[i].nombre+'</option>');
+            }                
+        });
+    }       
+
+
+    $(document).on('click', '.telefono-modal', function() {
+        $('.modal-title-telefono').text('Agregar Telefono');
+
+        $('.erroFKCompania').addClass('hidden');
+        $('.erroNumero').addClass('hidden');
+
+        $('#numero').val('');
+               
+        telefono = $(this).data('id');
+        tablaTelefono(telefono);
+        dropCompania();
+
+        $('#addTelefonoPersona').modal('show');
+    });     
+
+    $('.modal-footer').on('click', '.add-telefono', function() {
+        $.ajax({
+            type: 'POST',
+            url: '/Agregar/Telefono/Persona',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'fkcompania': $('#fkcompania').val(),
+                'numero': $('#numero').val(),
+                'fkpersona': telefono,   
+            },
+            success: function(data) {
+                $('.erroFKCompania').addClass('hidden');
+                $('.erroNumero').addClass('hidden');
+
+                if ((data.errors)) {
+                    setTimeout(function () {
+                        $('#addTelefonoPersona').modal('show');
+                        swal("Error", "No se ingreso la informacion", "error", {
+                          buttons: false,
+                          timer: 2000,
+                        });
+                    }, 500);
+
+                    if (data.errors.fkcompania) {
+                        $('.erroFKCompania').removeClass('hidden');
+                        $('.erroFKCompania').text(data.errors.fkcompania);
+                    }
+                    if (data.errors.numero) {
+                        $('.erroNumero').removeClass('hidden');
+                        $('.erroNumero').text(data.errors.numero);
+                    }                                                       
+                } else {
+                    swal("Correcto", "Se ingreso la informacion", "success")
+                    .then((value) => {
+                        $('#addTelefonoPersona').modal('show');
+                        $('#numero').val('');
+                        tablaTelefono(telefono);
+                        dropCompania();
+                    });                          
+                }
+            },
+        }); 
+    });
+
+    $(document).on('click', '.delete-telefono-modal', function() {
+        $.ajax({
+            type: 'POST',
+            url: '/eliminar/Telefono/Persona',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'id': $(this).data('id'),
+            },
+            success: function(data) {
+                if ((data.errors)) {
+                    setTimeout(function () {
+                        $('#addTelefonoPersona').modal('show');
+                        swal("Error", "No se ingreso la informacion", "error", {
+                          buttons: false,
+                          timer: 2000,
+                        });
+                    }, 500);
+                } else {
+                    swal("Correcto", "Se elimino la informacion", "success")
+                    .then((value) => {
+                        id = 0;                            
+                        $('#addTelefonoPersona').modal('show');
+                        $('#numero').val('');
+                        tablaTelefono(telefono);
+                        dropCompania();
+                    });                          
+                }
+            },
+        });
+    });
+
 
     </script>
 @stop

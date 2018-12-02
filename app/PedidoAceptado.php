@@ -26,6 +26,7 @@ class PedidoAceptado extends Model
         static::deleting(function($data) {
             Event::fire('regresion_stock.deleting', $data);
             Event::fire('regresion_puntos.deleting', $data);
+            Event::fire('regresion_regalias.deleting', $data);
         });        
                
 	} 

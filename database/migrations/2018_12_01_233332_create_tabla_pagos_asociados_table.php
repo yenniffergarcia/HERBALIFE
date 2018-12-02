@@ -18,6 +18,8 @@ class CreateTablaPagosAsociadosTable extends Migration
 
             $table->foreign('fkpersona')->references('id')->on('persona')->onUpdate('cascade');
             $table->foreign('fkmes')->references('id')->on('mes')->onUpdate('cascade');
+
+            $table->timestamps();
         });
     }
 

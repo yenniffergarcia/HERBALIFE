@@ -74,6 +74,31 @@ class DetalleVentaController extends Controller
             ->make(true);
     }
 
+    public function getdataHistorico($fkpedido)
+    {
+        $query = detalleventa::join('stock', 'detalle_venta.fkstock', 'stock.id')
+            ->join('producto', 'stock.fkproducto', 'producto.id')
+            ->where('detalle_venta.fkpedido', $fkpedido)
+            ->select(['detalle_venta.id as id', 'detalle_venta.created_at as fecha', 'detalle_venta.cantidad as cantidad', 'nombre', 'punto', 'precio', 'fkpedido', 'fkstock', 'detalle_venta.estado as estado']);
+
+        return Datatables::of($query)
+            ->addColumn('vista', function ($data) {
+                if($data->estado == 1)
+                    return 'Activo';
+                else
+                    return 'Inactivo';
+            })        
+            ->addColumn('fecha', function ($data) {
+                return date("d/m/Y", strtotime($data->fecha));
+            })             
+            ->addColumn('total_precio', function ($data) {
+                return $data->cantidad * $data->precio;
+            })
+            ->addColumn('total_punto', function ($data) {
+                return $data->cantidad * $data->punto;
+            })->make(true);
+    }    
+
     public function getpedido($fkpedido)
     {
         $query = detalleventa::join('stock', 'detalle_venta.fkstock', 'stock.id')
@@ -119,7 +144,7 @@ class DetalleVentaController extends Controller
         $query = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
             ->join('producto', 'stock.fkproducto', 'producto.id')
             ->where('pedido_aceptado.fkpedido', $fkpedido)
-            ->select(['pedido_aceptado.created_at as fecha', 'cantidad', 'nombre', 'punto', 'precio']);
+            ->select(['pedido_aceptado.created_at as fecha', 'pedido_aceptado.cantidad as cantidad', 'nombre', 'punto', 'precio']);
 
         return Datatables::of($query)
             ->addColumn('fecha', function ($data) {
