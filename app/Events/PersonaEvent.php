@@ -82,7 +82,12 @@ class PersonaEvent
         $insert->estado = $estado;
         if($insert->save())
         {
-            $this->enviarEmail($data->email, $nombre_completo, $username);
+            try 
+            {
+                $this->enviarEmail($data->email, $nombre_completo, $username);   
+            } catch (Exception $e) {
+                
+            }
         }
     }
 

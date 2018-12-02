@@ -59,3 +59,31 @@ Route::get('/getdata/DetalleCarga', 'DetalleCargaController@getdata')->name('get
 Route::get('/DetalleCarga/buscar/{id}', 'DetalleCargaController@buscar');
 Route::post('/estado/DetalleCarga', 'DetalleCargaController@estado');
 Route::get('/drop/producto/{categoria}', 'DetalleCargaController@dropProducto');
+
+//Pedido
+Route::resource('/Pedido', 'PedidoController');
+Route::get('/Pedido/Recibido/Data', 'PedidoController@indexRecibidos');
+Route::get('/getdata/Pedido', 'PedidoController@getdata')->name('getdata.Pedido');
+Route::get('/getpedido/Pedido', 'PedidoController@getpedido')->name('getpedido.Pedido');
+Route::get('/Pedido/buscar/{id}', 'PedidoController@buscar');
+Route::post('/pagado/Pedido', 'PedidoController@pagado');
+Route::post('/estado/Pedido', 'PedidoController@estado');
+
+//DetalleVenta
+Route::resource('/DetalleVenta', 'DetalleVentaController');
+Route::post('/storeAprobado/DetalleVenta', 'DetalleVentaController@storeAprobado');
+Route::get('/getdata/DetalleVenta/{pedido}', 'DetalleVentaController@getdata')->name('getdata.DetalleVenta');
+Route::get('/getpedido/DetalleVenta/{pedido}', 'DetalleVentaController@getpedido')->name('getpedido.DetalleVenta');
+Route::get('/getaceptado/DetalleVenta', 'DetalleVentaController@getaceptado')->name('getaceptado.DetalleVenta');
+Route::post('/estado/DetalleVenta', 'DetalleVentaController@estado');
+Route::get('/drop/stock/producto/{categoria}', 'DetalleVentaController@dropStock');
+Route::get('/verificar/producto/detalle/{stock}/{pedido}', 'DetalleVentaController@verificarProductoDetalle');
+Route::get('/verificar/stock/producto/{stock}/{cantidad}', 'DetalleVentaController@dropVerficiarStock');
+
+//Stock
+Route::resource('/Stock', 'StockController');
+Route::get('/getdata/Stock', 'StockController@getdata')->name('getdata.Stock');
+
+//Usuario
+Route::resource('/Usuario', 'UsuarioController');
+Route::get('/getdata/Usuario', 'UsuarioController@getdata')->name('getdata.Usuario');

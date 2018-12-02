@@ -18,6 +18,7 @@ class PaqueteInicialPersona extends Model
 	    static::created(function($data) {
             Event::fire('paque_puntos.created', $data);
             Event::fire('paquete_nivel.created', $data);
+            Event::fire('produtostock.created', $data);
         });
                
 	}    

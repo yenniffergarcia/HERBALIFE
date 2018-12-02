@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -12,6 +10,7 @@ use Response;
 use App\Factura;
 use App\DetalleVenta;
 use App\Persona;
+use App\User;
 use App\PedidoAceptado;
 use App\PersonaNivel;
 use Auth;
@@ -21,30 +20,62 @@ class PedidoController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('admin');
+        $this->middleware('gerente');
+        $this->middleware('asociado_interno', ['only' => ['index']]);
+        //$this->middleware('asociado_externo');
     }
 
     public function index()
     {
-        return view('sistema.pedido.index');
+        $button = '';
+
+        $persona_session = Persona::find(Auth::user()->fkpersona);
+
+        $rol_padre = User::where('fkpersona', $persona_session->id_padre)->first();
+
+        if($rol_padre->fkrol == 3)
+        {
+            $button = '<button class="add-modal btn btn-primary btn-xs" 
+            type="button">Generar Pedido</button>';            
+        }
+        return view('sistema.pedido.index', compact('button'));
     }
+
+    public function indexRecibidos()
+    {
+        return view('sistema.pedido.indexRecibidos');
+    }    
 
     public function getdata()
     {
         $persona = Persona::find(Auth::user()->fkpersona);
 
-        $query = pedido::join('persona_nivel', 'pedido.fkpersonivel' ,'persona_nivel.id')
+        $query = factura::join('persona_nivel', 'pedido.fkpersonivel' ,'persona_nivel.id')
             ->join('nivel', 'persona_nivel.fknivel' ,'nivel.id')
             ->join('descuento', 'nivel.fkdescuento' ,'descuento.id')
             ->where('pedido.estado', 1)
             ->where('pedido.fkcodigo', $persona->codigo)
-            ->select(['pedido.id as id', 'nivel.nombre as nivel', 'porcentaje', 'fecha', 
-                    'subtotal', 'total', \DB::raw("(SELECT CONCAT(nombre1.' '.IFNULL(nombre2,'').' '.apellido1.' '.IFNULL(apellido2,'')) FROM persona p
+            ->select(['pedido.id as id', 'nivel.nombre as nivel', 'porcentaje', 'pedido.fecha as fecha', 
+                    'subtotal', 'total', \DB::raw("(SELECT CONCAT(nombre1,' ',IFNULL(nombre2,''),' ',apellido1,' ',IFNULL(apellido2,'')) FROM persona p
                               WHERE p.id = '".$persona->id_padre."') as distribuidor"), 'pagado']);
 
         return Datatables::of($query)
+            ->addColumn('numero', function ($data) {
+                return $data->id;
+            })        
             ->addColumn('fecha', function ($data) {
                 return date("d/m/Y", strtotime($data->fecha));
-            })              
+            })         
+            ->addColumn('descuento', function ($data) {
+                return $data->nivel.' - '.$data->porcentaje.'%';
+            })  
+            ->addColumn('estado_pago', function ($data) {
+                if($data->pagado == 1)
+                    return 'Pagado';
+                else
+                    return 'No Pagado';
+            })                        
             ->addColumn('action', function ($data) {
                 $btn_cancelar = '';
                 $btn_pagar = '';
@@ -55,13 +86,16 @@ class PedidoController extends Controller
                 $aceptados = PedidoAceptado::where('fkpedido', $data->id)->get();
                 $solictados = DetalleVenta::where('fkpedido', $data->id)->get();
                 
-                if(count($aceptados) == count($solictados) && $data->pagado == 0)
+                if(count($solictados) > 0)
                 {
-                    $btn_pagar = '<button class="pagar-modal btn btn-primary btn-xs" 
-                    type="button" data-id="'.$data->id.'">Pagar</button>';
+                    if(count($aceptados) == count($solictados) && $data->pagado == 0)
+                    {
+                        $btn_pagar = '<button class="pagar-modal btn btn-primary btn-xs" 
+                        type="button" data-id="'.$data->id.'">Pagar</button>';
 
-                    $btn_cancelar = '<button class="cancelar-modal btn btn-danger btn-xs" 
-                    type="button" data-id="'.$data->id.'">Cancelar</button>';                  
+                        $btn_cancelar = '<button class="cancelar-modal btn btn-danger btn-xs" 
+                        type="button" data-id="'.$data->id.'">Cancelar</button>';                  
+                    }
                 }
                 if(count($aceptados) == count($solictados) && $data->pagado == 1)
                 {
@@ -80,24 +114,33 @@ class PedidoController extends Controller
 
     public function getpedido()
     {
-        $query = pedido::join('persona', 'pedido.fkcodigo', 'persona.codigo')
+        $query = factura::join('persona', 'pedido.fkcodigo', 'persona.codigo')
             ->join('persona_nivel', 'pedido.fkpersonivel' ,'persona_nivel.id')
             ->join('nivel', 'persona_nivel.fknivel' ,'nivel.id')
             ->join('descuento', 'nivel.fkdescuento' ,'descuento.id')
             ->where('pedido.estado', 1)
             ->where('pedido.fkpersona', Auth::user()->fkpersona)
             ->select(['pedido.id as id', 'nivel.nombre as nivel', 'porcentaje', 'fecha', 
-                    'subtotal', 'total', 'nombre1', 'nombre2', 'apellido1', 'apellido2', 'pagado']);
+                    'subtotal', 'total', 'codigo', 'nombre1', 'nombre2', 'apellido1', 'apellido2', 'pagado']);
 
         return Datatables::of($query)
+            ->addColumn('numero', function ($data) {
+                return $data->id;
+            })        
             ->addColumn('fecha', function ($data) {
                 return date("d/m/Y", strtotime($data->fecha));
-            }) 
-            ->addColumn('pagado', function ($data) {
+            })         
+            ->addColumn('descuento', function ($data) {
+                return $data->nivel.' - '.$data->porcentaje.'%';
+            })  
+            ->addColumn('estado_pago', function ($data) {
                 if($data->pagado == 1)
                     return 'Pagado';
                 else
                     return 'No Pagado';
+            })              
+            ->addColumn('asociado', function ($data) {
+                return $data->codigo.'-'.$data->nombre1.' '.$data->apellido1;
             })                           
             ->addColumn('action', function ($data) {
                 $detalle_venta = ''; 
@@ -129,7 +172,7 @@ class PedidoController extends Controller
     public function buscar(Request $request, $id)
     {
         if($request->ajax()){
-            $data = pedido::find($id);
+            $data = factura::find($id);
             return response()->json($data);
         }        
     }  
@@ -144,20 +187,25 @@ class PedidoController extends Controller
         $nivel = PersonaNivel::join('nivel', 'persona_nivel.fknivel' ,'nivel.id')
             ->join('descuento', 'nivel.fkdescuento' ,'descuento.id')
             ->where('persona_nivel.estado', 1)
-            ->where('persona_nivel.persona', Auth::user()->fkpersona)
+            ->where('persona_nivel.fkpersona', Auth::user()->fkpersona)
             ->select('persona_nivel.id as id')->first();
 
-        $persona = Persona::find(Auth::user()->fkpersona);
+        if (is_null($nivel)) {
+            return Response::json(array('errors' => 'error'));
+        } else {
+            $persona = Persona::find(Auth::user()->fkpersona);
 
-        $data = new pedido;
-        $data->fkcodigo = $persona->codigo;
-        $data->fkpersona = $persona->id_padre;
-        $data->fkpersonivel = $nivel->id;
-        $data->fecha = date("Y-m-d");       
-        $data->subtotal = 0.00;
-        $data->total =  0.00;                
-        $data->save();
-        return response()->json($data);
+            $data = new factura;
+            $data->fkcodigo = $persona->codigo;
+            $data->fkpersona = $persona->id_padre;
+            $data->fkpersonivel = $nivel->id;
+            $data->fecha = date("Y-m-d");       
+            $data->subtotal = 0.00;
+            $data->total =  0.00;
+            $data->total =  0.00;                
+            $data->save();
+            return response()->json($data);
+        }
     }
 
     public function show($id)
@@ -175,10 +223,20 @@ class PedidoController extends Controller
 
     }
 
+    public function pagado(Request $request)
+    {
+        if($request->ajax()){
+            $data = factura::findOrFail($request->id);
+            $data->pagado = 1;
+            $data->save();
+            return response()->json($data);
+        }        
+    }    
+
     public function estado(Request $request)
     {
         if($request->ajax()){
-            $data = pedido::findOrFail($request->id);
+            $data = factura::findOrFail($request->id);
             $data->estado = 0;
             if($data->save())
             {

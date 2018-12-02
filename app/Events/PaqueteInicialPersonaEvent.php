@@ -15,6 +15,7 @@ use App\User;
 use App\PaqueteProducto;
 use App\PuntoMes;
 use App\PersonaNivel;
+use App\Stock;
 use Auth;
 
 class PaqueteInicialPersonaEvent
@@ -37,7 +38,7 @@ class PaqueteInicialPersonaEvent
 
         $punto_producto = PaqueteProducto::join('producto', 'paquete_producto.fkproducto', 'producto.id')
             ->where('paquete_producto.estado', 1)
-            ->where('id', $data->fkpaquete_producto)
+            ->where('paquete_producto.id', $data->fkpaquete_producto)
             ->select('punto')->get();
 
         foreach($punto_producto as $value)
@@ -73,6 +74,43 @@ class PaqueteInicialPersonaEvent
             }            
         }        
     }   
+
+    public function created_produtostock(PaqueteInicialPersona $data)
+    {
+        $fecha = date('Y-m-d');
+        $masmes = strtotime ( '+12 month' , strtotime ( $fecha ) ) ;
+        $masmes = date ( 'Y-m-d' , $masmes );
+
+        $paquete = PaqueteProducto::find($data->fkpaquete_producto); 
+
+        $productos = PaqueteProducto::where('fkpaquete', $paquete->fkpaquete)
+            ->select('paquete_producto.*')->get();
+
+        foreach ($productos as $producto) 
+        {
+            $existe = Stock::where('fkpersona', $data->fkpersona)
+                    ->where('fkproducto', $producto->fkproducto)
+                    ->where('fecha_vencimiento', $masmes)
+                    ->first();
+
+            if(!is_null($existe))
+            {
+                $update = Stock::findOrFail($existe->id);
+                $update->cantidad = $update->cantidad+1;
+                $update->save();
+            }
+            else
+            {
+                $insert = new Stock;
+                $insert->fkpersona = $data->fkpersona;
+                $insert->fkproducto = $producto->fkproducto;
+                $insert->cantidad = 1;
+                $insert->fecha_vencimiento = $masmes;
+                $insert->save();
+            }
+
+        }
+    } 
 
     public function broadcastOn()
     {

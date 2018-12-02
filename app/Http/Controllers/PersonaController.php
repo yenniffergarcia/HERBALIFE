@@ -20,6 +20,10 @@ class PersonaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('admin', ['only' => ['index']]);
+        $this->middleware('gerente', ['only' => ['indexAdmin']]);
+        $this->middleware('asociado_interno', ['only' => ['index', 'indexAdmin']]);
+        $this->middleware('asociado_externo', ['only' => ['index', 'indexAdmin']]);
     }
 
     protected $verificar_insert =
@@ -76,8 +80,7 @@ class PersonaController extends Controller
                 foreach($personas as $persona)
                 {
                     $total = $total+1;
-                    $cargo = $cargo.' - '.$total.'.'.$data->nombre1.' '.$data->nombre2.' '.$data->apellido1
-                    .' '.$data->apellido2.' '.$data->apellido3;
+                    $cargo = $cargo.' - '.$total.'.'.$persona->nombre1.' '.$persona->apellido1;
                 }
 
                 return $cargo;

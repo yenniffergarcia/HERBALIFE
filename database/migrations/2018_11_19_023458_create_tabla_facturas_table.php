@@ -16,7 +16,7 @@ class CreateTablaFacturasTable extends Migration
             $table->boolean('estado')->default(1);
             $table->boolean('pagado')->default(0);
 
-            $table->string('fkcodigo', 10);            
+            $table->string('fkcodigo', 11);            
             $table->unsignedInteger('fkpersona');
             $table->unsignedInteger('fkpersonivel');
 

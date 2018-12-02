@@ -37,7 +37,6 @@ class StockEvent
     {
         $existe = Stock::where('fkpersona', Auth::user()->fkpersona)
             ->where('fkproducto', $data->fkproducto)
-            ->where('fecha_vencimiento', date("Y-m-d", strtotime($data->fecha_vencimiento)))
             ->select('id')->first();
 
         if(!\is_null($existe)) {

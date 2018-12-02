@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -13,6 +12,7 @@ use App\DetalleVenta;
 use App\Persona;
 use App\PedidoAceptado;
 use App\PersonaNivel;
+use App\Stock;
 use Auth;
 
 class DetalleVentaController extends Controller
@@ -20,6 +20,10 @@ class DetalleVentaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        //$this->middleware('admin');
+        //$this->middleware('gerente');
+        $this->middleware('asociado_interno');
+        $this->middleware('asociado_externo');
     }
 
     protected $verificar_insert =
@@ -40,7 +44,7 @@ class DetalleVentaController extends Controller
             ->join('producto', 'stock.fkproducto', 'producto.id')
             ->where('detalle_venta.fkpedido', $fkpedido)
             ->where('detalle_venta.estado', 1)
-            ->select(['detalle_venta.id as id', 'detalle_venta.created_at as fecha', 'cantidad', 'nombre', 'punto', 'precio', 'fkpedido', 'fkstock']);
+            ->select(['detalle_venta.id as id', 'detalle_venta.created_at as fecha', 'detalle_venta.cantidad as cantidad', 'nombre', 'punto', 'precio', 'fkpedido', 'fkstock']);
 
         return Datatables::of($query)
             ->addColumn('fecha', function ($data) {
@@ -76,7 +80,7 @@ class DetalleVentaController extends Controller
             ->join('producto', 'stock.fkproducto', 'producto.id')
             ->where('detalle_venta.fkpedido', $fkpedido)
             ->where('detalle_venta.estado', 1)
-            ->select(['detalle_venta.id as id', 'detalle_venta.created_at as fecha', 'cantidad', 'nombre', 'punto', 'precio', 'fkpedido', 'fkstock']);
+            ->select(['detalle_venta.id as id', 'detalle_venta.created_at as fecha', 'detalle_venta.cantidad as cantidad', 'nombre', 'punto', 'precio', 'fkpedido', 'fkstock']);
 
         return Datatables::of($query)
             ->addColumn('fecha', function ($data) {
@@ -98,9 +102,9 @@ class DetalleVentaController extends Controller
                 if(is_null($aceptado))
                 {
                     $btn_aceptar = '<button class="si-modal btn btn-primary btn-xs" 
-                    type="button" data-id="'.$data->id.'">Aprobar</button>';    
+                    type="button" data-cantidad="'.$data->cantidad.'" data-fkstock="'.$data->fkstock.'" data-fkpedido="'.$data->fkpedido.'">Aprobar</button>';    
 
-                    $btn_rechazar = '<button class="si-modal btn btn-warning btn-xs" 
+                    $btn_rechazar = '<button class="no-modal btn btn-warning btn-xs" 
                     type="button" data-id="'.$data->id.'">Rechazar</button>';       
                 }
 
@@ -130,6 +134,55 @@ class DetalleVentaController extends Controller
             ->make(true);
     }      
 
+    public function dropStock(Request $request, $categoria)
+    {
+        if($request->ajax()){
+
+            $persona = Persona::find(Auth::user()->fkpersona);
+
+            $data = stock::join('producto', 'stock.fkproducto', 'producto.id')
+                    ->join('categoria', 'producto.fkcategoria', 'categoria.id')
+                    ->where('producto.fkcategoria', $categoria)
+                    ->where('stock.fkpersona', $persona->id_padre)
+                    ->where('stock.cantidad', '>', '0')
+                    ->select('stock.*', 'categoria.nombre as categoria', 'producto.nombre as producto')->get();
+            return response()->json($data);
+        }        
+    }
+
+    public function dropVerficiarStock(Request $request, $stock, $cantidad)
+    {
+        if($request->ajax()){
+            $verficar = Stock::find($stock);
+            if(($verficar->cantidad - $cantidad) < 0)
+            {
+                $data = 0;
+            }
+            else
+            {
+                $data = 1;
+            }
+            return response()->json($data);
+        }        
+    }   
+
+    public function verificarProductoDetalle(Request $request, $stock, $pedido)
+    {
+        if($request->ajax()){
+            $verificar = detalleventa::where('fkstock', $stock)
+                ->where('fkpedido', $pedido)->first();
+            if(!is_null($verificar))
+            {
+                $data = 0;
+            }
+            else
+            {
+                $data = 1;
+            }
+            return response()->json($data);
+        }        
+    }      
+
     public function create()
     {
         //
@@ -155,14 +208,21 @@ class DetalleVentaController extends Controller
     {
         $validator = Validator::make(Input::all(), $this->verificar_insert);
         
+        $estado = detalleventa::where('fkstock', $request->fkstock)
+                    ->where('fkpedido', $request->fkpedido)
+                    ->where('estado', 1)->get();
+
         if ($validator->fails()) {
             return Response::json(array('errors' => $validator->getMessageBag()->toArray()));
         } else {
             $data = new PedidoAceptado;
             $data->fkstock = $request->fkstock;
             $data->fkpedido = $request->fkpedido;
-            $data->cantidad = $request->cantidad;         
-            $data->save();
+            $data->cantidad = $request->cantidad;
+            if(count($estado) > 0)
+            {
+                $data->save();
+            }         
             return response()->json($data);
         } 
     }    

@@ -3,11 +3,26 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Event;
 
 class PuntoMes extends Model
 {
     protected $table = 'punto_mes';
-    protected $guarded = ['id', 'fkmes', 'fkpersona', 'fecha']; 
+    protected $guarded = ['id', 'fkmes', 'fkpersona']; 
     protected $fillable = ['fecha', 'punto'];  
+
+    public static function boot() {
+
+	    parent::boot();
+
+	    static::created(function($data) {
+            Event::fire('verificar_nivel.created', $data);
+        });
+
+        static::updated(function($data) {
+            Event::fire('verificar_nivel.update', $data);
+        });     
+               
+	} 
 
 }

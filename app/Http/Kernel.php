@@ -39,6 +39,10 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,                      
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,     
+        'admin' => \App\Http\Middleware\Administrador::class,     
+        'gerente' => \App\Http\Middleware\Gerente::class,  
+        'asociado_interno' => \App\Http\Middleware\AsociadoInterno::class,  
+        'asociado_externo' => \App\Http\Middleware\AsociadoExterno::class,              
     ];
 }

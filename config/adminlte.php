@@ -152,7 +152,7 @@ return [
                 ],  
                 [
                 'text' => 'Usuario',
-                'url'  => '/sistema/imedchi/usuario',
+                'url'  => '/Usuario',
                 'icon_color' => 'red',
                 ],                                                                                                
             ],
@@ -170,7 +170,22 @@ return [
                 'text' => 'Cargar Producto',
                 'url'  => '/DetalleCarga',
                 'icon_color' => 'yellow',
-                ],                                                                                                              
+                ],  
+                [
+                'text' => 'Stock',
+                'url'  => '/Stock',
+                'icon_color' => 'yellow',
+                ],                                                                                                                   
+                [
+                'text' => 'Pedidos Realizados',
+                'url'  => '/Pedido',
+                'icon_color' => 'yellow',
+                ],  
+                [
+                'text' => 'Pedidos Recibidos',
+                'url'  => '/Pedido/Recibido/Data',
+                'icon_color' => 'yellow',
+                ],                        
             ],
         ],        
     ],

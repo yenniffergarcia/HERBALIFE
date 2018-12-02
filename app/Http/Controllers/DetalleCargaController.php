@@ -17,6 +17,10 @@ class DetalleCargaController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('admin');
+        $this->middleware('gerente');
+        //$this->middleware('asociado_interno');
+        $this->middleware('asociado_externo');
     }
 
     protected $verificar_insert =
