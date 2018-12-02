@@ -15,6 +15,7 @@ use App\Factura;
 use App\Persona;
 use App\PersonaNivel;
 use App\PuntoMes;
+use App\Regalia;
 
 class PedidoAceptadoEvent
 {
@@ -99,6 +100,41 @@ class PedidoAceptadoEvent
         }
     }  
 
+    public function created_verficarregalias(PedidoAceptado $data)
+    {
+        $stock = Stock::join('producto', 'stock.fkproducto', 'producto.id')
+            ->where('stock.id', $data->fkstock)->select('precio')->first();        
+        $pedido = Factura::find($data->fkpedido);
+        $persona = Persona::where('codigo', $pedido->fkcodigo)->first();  
+        $cincuenta = PersonaNivel::where('fkpersona', $persona->id)
+            ->where('fknivel', 4)->where('estado', 1)->first();          
+
+        if(!is_null($cincuenta))
+        {
+            $existe_regalia = Regalia::where('fkpersona', $pedido->fkpersona)
+                ->where('fkpedido', $data->fkpedido)
+                ->where('fkmes', date('n'))
+                ->where('anio', date('Y'))->first();
+
+            if(!is_null($existe_regalia))
+            {
+                $update = Regalia::findOrFail($existe_regalia->id);
+                $update->monto = $update->monto + ($stock->precio * 0.05);
+                $update->save();
+            }
+            else
+            {
+                $insert = new Regalia;
+                $insert->monto = $stock->precio * 0.05;
+                $insert->fkpersona = $pedido->fkpersona;
+                $insert->fkcodigo = $pedido->fkcodigo;
+                $insert->fkmes = date('n');
+                $insert->fkpedido = $data->fkpedido;
+                $insert->save();
+            }
+        }
+    }    
+
     public function deleting_regresionstock(PedidoAceptado $data)
     {
         $stock_asociado = Stock::find($data->fkstock);
@@ -147,6 +183,32 @@ class PedidoAceptadoEvent
             }
         }
     }          
+
+    public function deleting_regresionregalias(PedidoAceptado $data)
+    {
+        $stock = Stock::join('producto', 'stock.fkproducto', 'producto.id')
+            ->where('stock.id', $data->fkstock)->select('precio')->first();        
+        $pedido = Factura::find($data->fkpedido);
+        $persona = Persona::where('codigo', $pedido->fkcodigo)->first();  
+        $cincuenta = PersonaNivel::where('fkpersona', $persona->id)
+            ->where('fknivel', 4)->where('estado', 1)->first();          
+
+        if(!is_null($cincuenta))
+        {
+            $existe_regalia = Regalia::where('fkpersona', $pedido->fkpersona)
+                ->where('fkpedido', $data->fkpedido)
+                ->where('fkmes', date('n'))
+                ->where('anio', date('Y'))->first();
+
+            if(!is_null($existe_regalia))
+            {
+                $update = Regalia::findOrFail($existe_regalia->id);
+                $update->monto = $update->monto - ($stock->precio * 0.05);
+                $update->save();
+            }
+        }
+    }
+
 
     public function broadcastOn()
     {

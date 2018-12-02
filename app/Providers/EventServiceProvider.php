@@ -73,21 +73,33 @@ class EventServiceProvider extends ServiceProvider
         ],
         'sumar_puntos.created' => [
             'App\Events\PedidoAceptadoEvent@created_sumarpuntos',
-        ], 
+        ],
+        'verficar_regalias.created' => [
+            'App\Events\PedidoAceptadoEvent@created_verficarregalias',
+        ],         
         'regresion_stock.deleting' => [
             'App\Events\PedidoAceptadoEvent@deleting_regresionstock',
         ],              
         'regresion_puntos.deleting' => [
             'App\Events\PedidoAceptadoEvent@deleting_regresionpuntos',
         ],        
+        'regresion_regalias.deleting' => [
+            'App\Events\PedidoAceptadoEvent@deleting_regresionregalias',
+        ], 
 
         // ------- Eventos (Triggers), para las acciones en el modelo PersonaNivel --------
         'verificar_nivel.created' => [
             'App\Events\PersonaNivelEvent@created_verificarnivel',
-        ],              
+        ],   
+        'bonificacion_red.created' => [
+            'App\Events\PersonaNivelEvent@created_bonificacionred',
+        ],                   
         'verificar_nivel.update' => [
             'App\Events\PersonaNivelEvent@update_verificarnivel',
-        ],        
+        ],                 
+        'bonificacion_red.update' => [
+            'App\Events\PersonaNivelEvent@update_bonificacionred',
+        ],             
 
 
     ];

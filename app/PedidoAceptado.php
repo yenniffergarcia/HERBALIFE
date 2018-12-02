@@ -20,6 +20,7 @@ class PedidoAceptado extends Model
             Event::fire('aceptadon_producto.created', $data);
             Event::fire('llenar_inventario.created', $data);
             Event::fire('sumar_puntos.created', $data);
+            Event::fire('verficar_regalias.created', $data);
         });
 
         static::deleting(function($data) {
