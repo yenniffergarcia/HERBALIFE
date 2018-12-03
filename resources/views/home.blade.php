@@ -365,7 +365,7 @@
 	            series: [{
 	              name: 'Porcentaje',
 	              colorByPoint: true,
-	              data: chartData   
+	              data: [chartData]   
 	            }]
 	          });
 	        });
