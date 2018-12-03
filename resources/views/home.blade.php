@@ -261,15 +261,15 @@
 				                <tr>
 					                <th>Cantidad</th>
 					                <th>Producto</th>
-					                <th>Precio</th>
+					                <th>Punto</th>
 				                </tr>
 			                </thead>
 			                <tbody>
 			                	@foreach($stocks as $stock)
 				                <tr>
 					                <td>{{ $stock->cantidad }}</td>
-					                <td>{{ $stock->nombre }} - {{ $stock->punto }}</td>
-					                <td>{{ $stock->precio }}</td>
+					                <td>{{ $stock->nombre }}</td>
+					                <td>{{ $stock->punto }}</td>
 				                </tr>
 				                @endforeach
 			                </tbody>

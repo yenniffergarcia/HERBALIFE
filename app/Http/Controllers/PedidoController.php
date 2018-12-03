@@ -28,11 +28,7 @@ class PedidoController extends Controller
     }
 
     public function index()
-    {
-        $prueba = PuntoMes::where('fkpersona',4)
-                        ->orderby('punto_mes.id','DESC')->take(2)->get();
-
-                        
+    { 
         $button = '';
 
         $persona_session = Persona::find(Auth::user()->fkpersona);

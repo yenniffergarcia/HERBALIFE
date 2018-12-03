@@ -49,24 +49,18 @@ class PersonaNivelEvent
             $suma_doce_meses = $suma_doce_meses + $valor->punto;
         }        
 
-        if($data->punto > 499 && $data->punto < 2501)
+        if($data->punto > 499 && $data->punto < 2500)
         {
             $this->cambiar_estado_nive($data, 1, 2);
         }
-        if(count($dos_meses)>0)
+        if($suma_dos_meses > 2499 && $suma_dos_meses < 3999)
         {
-            if($suma_dos_meses > 2499 && $suma_dos_meses < 4001)
-            {
-                $this->cambiar_estado_nive($data, 2, 3);            
-            }               
-        }
-        if(count($doce_meses)>0)
+            $this->cambiar_estado_nive($data, 2, 3);            
+        }               
+        if($suma_doce_meses > 3999)
         {
-            if($suma_doce_meses > 3999)
-            {
-                $this->cambiar_estado_nive($data, 3, 4);             
-            }                 
-        }           
+            $this->cambiar_estado_nive($data, 3, 4);             
+        }                            
     }    
 
     public function update_verificarnivel(PuntoMes $data)
@@ -92,153 +86,51 @@ class PersonaNivelEvent
             $suma_doce_meses = $suma_doce_meses + $valor->punto;
         }        
 
-        if($data->punto > 499 && $data->punto < 2501)
+        if($data->punto > 499 && $data->punto < 2500)
         {
             $this->cambiar_estado_nive($data, 1, 2);
         }
-        if(count($dos_meses)>0)
+        if($suma_dos_meses > 2499 && $suma_dos_meses < 3999)
         {
-            if($suma_dos_meses > 2499 && $suma_dos_meses < 4001)
-            {
-                $this->cambiar_estado_nive($data, 2, 3);            
-            }               
-        }
-        if(count($doce_meses)>0)
+            $this->cambiar_estado_nive($data, 2, 3);            
+        }               
+        if($suma_doce_meses > 3999)
         {
-            if($suma_doce_meses > 3999)
-            {
-                $this->cambiar_estado_nive($data, 3, 4);             
-            }                 
-        }    
+            $this->cambiar_estado_nive($data, 3, 4);             
+        }                  
     }   
 
     public function cambiar_estado_nive($data, $numero_actual, $numero_nuevo)
     {
-        $suma = 0;
-        switch ($numero_nuevo) 
+        $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
+            ->where('fknivel', $numero_actual)
+            ->select('id')->first();  
+
+        if(!is_null($cambiar_nivel))
         {
-            case 3:
-                    $puntos = PuntoMes::where('fkpersona', $data->fkpersona)
-                        ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
-                        ->select('punto')->orderby('punto_mes.id','DESC')->take(2)->get();     
-                        
-                    foreach ($puntos as $valor) 
-                    {
-                        $suma = $suma + $valor->punto;
-                    }
-
-                    if($suma > 2500 && $suma < 4001)
-                    {
-                        $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                            ->where('fknivel', $numero_actual)
-                            ->select('id')->first();  
-
-                        if(!is_null($cambiar_nivel))
-                        {
-                            $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                            $update->estado = 0;
-                            if($update->save())
-                            {
-                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                                                            ->where('fknivel', $numero_nuevo)
-                                                            ->select('id')->first();                                
-                                
-                                if(!is_null($cambiar_nivel))
-                                {
-                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                                    $update->estado = 1; 
-                                    $update->save();                                      
-                                }
-                                else
-                                {
-                                    $insert = new PersonaNivel;
-                                    $insert->fkpersona = $data->fkpersona;
-                                    $insert->fknivel = $numero_nuevo;
-                                    $insert->save();
-                                }
-                            }
-                        } 
-
-                    } 
-                break;
-
-            case 4:
-                    $puntos = PuntoMes::where('fkpersona', $data->fkpersona)
-                        ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), date('Y'))
-                        ->select('punto')->orderby('punto_mes.id','DESC')->take(12)->get();          
-                        
-                    foreach ($puntos as $valor) 
-                    {
-                        $suma = $suma + $valor->punto;
-                    }
-
-                    if($suma > 2500 && $suma < 4001)
-                    {
-                        $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                            ->where('fknivel', $numero_actual)
-                            ->select('id')->first();  
-
-                        if(!is_null($cambiar_nivel))
-                        {
-                            $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                            $update->estado = 0;
-                            if($update->save())
-                            {
-                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                                                            ->where('fknivel', $numero_nuevo)
-                                                            ->select('id')->first();                                
-                                
-                                if(!is_null($cambiar_nivel))
-                                {
-                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                                    $update->estado = 1; 
-                                    $update->save();                                      
-                                }
-                                else
-                                {
-                                    $insert = new PersonaNivel;
-                                    $insert->fkpersona = $data->fkpersona;
-                                    $insert->fknivel = $numero_nuevo;
-                                    $insert->save();
-                                }
-                            }
-                        } 
-                                    
-                    } 
-                break;                
-            
-            default:
-                    $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                        ->where('fknivel', $numero_actual)
-                        ->select('id')->first();  
-
-                    if(!is_null($cambiar_nivel))
-                    {
-                        $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                        $update->estado = 0;
-                        if($update->save())
-                        {
-                                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
-                                                            ->where('fknivel', $numero_nuevo)
-                                                            ->select('id')->first();                                
-                                
-                                if(!is_null($cambiar_nivel))
-                                {
-                                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
-                                    $update->estado = 1; 
-                                    $update->save();                                   
-                                }
-                                else
-                                {
-                                    $insert = new PersonaNivel;
-                                    $insert->fkpersona = $data->fkpersona;
-                                    $insert->fknivel = $numero_nuevo;
-                                    $insert->save();
-                                }
-                        }
-                    } 
-                break;
-        }
+            $update = PersonaNivel::findOrFail($cambiar_nivel->id);
+            $update->estado = 0;
+            if($update->save())
+            {
+                $cambiar_nivel = PersonaNivel::where('fkpersona', $data->fkpersona)
+                                            ->where('fknivel', $numero_nuevo)
+                                            ->select('id')->first();                                
+                
+                if(!is_null($cambiar_nivel))
+                {
+                    $update = PersonaNivel::findOrFail($cambiar_nivel->id);
+                    $update->estado = 1; 
+                    $update->save();                                      
+                }
+                else
+                {
+                    $insert = new PersonaNivel;
+                    $insert->fkpersona = $data->fkpersona;
+                    $insert->fknivel = $numero_nuevo;
+                    $insert->save();
+                }
+            }
+        } 
     }
 
     public function created_bonificacionred(PuntoMes $data)

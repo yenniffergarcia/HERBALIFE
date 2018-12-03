@@ -60,27 +60,51 @@ class PaqueteInicialPersonaEvent
 
     public function created_personanivel(PaqueteInicialPersona $data)
     {
+        $suma = 0;
         $persona = User::where('fkpersona', $data->fkpersona)->first();
+        $paquetes = PaqueteInicialPersona::join('paquete_producto', 'paquete_inicial_persona.fkpaquete_producto', 'paquete_producto.id')
+            ->join('producto', 'paquete_producto.fkproducto', 'producto.id')
+            ->where('paquete_inicial_persona.fkpersona', $data->fkpersona)
+            ->select('producto.punto as punto')->get();
+
+        foreach ($paquetes as $paquete) 
+        {
+            $suma = $suma + $paquete->punto;
+        }
 
         if(Auth::user()->fkrol != 1)
         {
-            $existe = PersonaNivel::where('fkpersona', $data->fkpersona)
-                ->where('fknivel', 1)->first();
-
-            if(is_null($existe))
+            if($suma >= 0 && $suma < 500)
             {
-                $insert = new PersonaNivel;
-                $insert->fkpersona = $data->fkpersona;
-                $insert->fknivel = 1;
-                if($insert->save())
-                {
-                    $update = User::findOrFail($persona->id);
-                    $update->estado = 1;
-                    $update->save();
-                } 
+                $this->cambiar_estado_nive($data, 0, 1);
+            }            
+            if($suma > 499 && $suma < 2500)
+            {
+                $this->cambiar_estado_nive($data, 1, 2);
+            }
+            if($suma > 2499 && $suma < 3999)
+            {
+                $this->cambiar_estado_nive($data, 2, 3);            
+            }               
+            if($suma > 3999)
+            {
+                $this->cambiar_estado_nive($data, 3, 4);             
             }           
-        }        
+        }         
     }   
+
+    public function cambiar_estado_nive($data, $numero_actual, $numero_nuevo)
+    {
+        $insert = new PersonaNivel;
+        $insert->fkpersona = $data->fkpersona;
+        $insert->fknivel = $numero_nuevo;
+        if($insert->save())
+        {
+            $update = User::findOrFail($data->fkpersona);
+            $update->estado = 1;
+            $update->save();
+        } 
+    }    
 
     public function created_produtostock(PaqueteInicialPersona $data)
     {

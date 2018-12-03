@@ -15,12 +15,12 @@ class PuntoMes extends Model
 
 	    parent::boot();
 
-	    static::creating(function($data) {
+	    static::created(function($data) {
             Event::fire('verificar_nivel.created', $data);
             Event::fire('bonificacion_red.created', $data);
         });
 
-        static::updating(function($data) {
+        static::updated(function($data) {
             Event::fire('verificar_nivel.update', $data);
             Event::fire('bonificacion_red.update', $data);
         });     
