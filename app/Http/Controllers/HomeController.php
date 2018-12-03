@@ -170,9 +170,10 @@ class HomeController extends Controller
        	{
             $numero = (int) $punto->red;
 	        $dataCol['name'] = $punto->nombre1.' '.$punto->apellido1;
-	        $dataCol['y'] = $numero;                     		
+	        $dataCol['y'] = $numero;
+            array_push($resultado,$dataCol);                     		
        	}
-        return response()->json($dataCol); 
+        return response()->json($resultado); 
     }    
 
 }
