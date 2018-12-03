@@ -67,7 +67,7 @@
         <div class="col-md-12">
           	<div class="box">
             	<div class="box-header with-border">
-              		<h3 class="box-title">Información Mensual</h3>
+              		<h3 class="box-title">Información Anual</h3>
             	</div>
 
 	            <div class="box-body">
