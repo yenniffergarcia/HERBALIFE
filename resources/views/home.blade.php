@@ -120,7 +120,7 @@
 
 	                	<div class="col-md-4">
 			                <p class="text-center">
-			                	<strong>Punteo por Nivel</strong>
+			                	<a href="{{ route('Punteo.index') }}"><strong>Punteo por Nivel</strong></a>
 			                </p>
 
 			                <div class="progress-group">

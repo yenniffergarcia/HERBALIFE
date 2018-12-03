@@ -4,9 +4,11 @@ Auth::routes();
 
 //Dashboard
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/Punteo', 'HomeController@indexPuntos')->name('Punteo.index');
 Route::get('/Pago', 'HomeController@indexPago')->name('Pago.index');
 Route::get('/Regalia', 'HomeController@indexRegalia')->name('Regalia.index');
 Route::get('/Bonificacion', 'HomeController@indexBonificacion')->name('Bonificacion.index');
+Route::get('/getdata/Punteo', 'HomeController@getdataPuntos')->name('getdata.Punteo');
 Route::get('/getdata/Pago', 'HomeController@getdataPago')->name('getdata.Pago');
 Route::get('/getdata/Regalia', 'HomeController@getdataRegalia')->name('getdata.Regalia');
 Route::get('/getdata/Bonificacion', 'HomeController@getdataBonificacion')->name('getdata.Bonificacion');

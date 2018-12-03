@@ -10,6 +10,7 @@ use App\Stock;
 use App\Bonificacion;
 use App\Regalia;
 use App\Persona;
+use App\PuntoMes;
 use App\PagoAsociado;
 use Auth;
 
@@ -56,6 +57,11 @@ class HomeController extends Controller
         return view('home', compact('pedidos', 'stocks', 'redes', 'puntos', 'informacion_pagos', 'regalias', 'pagos', 'boficaciones'));
     }
 
+    public function indexPuntos()
+    {
+        return view('sistema.punto.index');
+    }
+
     public function indexPago()
     {
         return view('sistema.pago.index');
@@ -69,6 +75,16 @@ class HomeController extends Controller
     public function indexBonificacion()
     {
         return view('sistema.bonificacion.index');
+    }
+
+    public function getdataPuntos()
+    {
+        $query = PuntoMes::join('mes', 'punto_mes.fkmes' ,'mes.id')->select(['punto', 'mes', 'fecha']);
+
+        return Datatables::of($query)
+            ->addColumn('fecha', function ($data) {
+                return date("d/m/Y", strtotime($data->fecha));
+            })->make(true);
     }
 
     public function getdataPago()
