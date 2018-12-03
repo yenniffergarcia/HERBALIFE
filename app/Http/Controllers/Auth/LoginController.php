@@ -50,7 +50,7 @@ class LoginController extends Controller
 
 					if(!is_null($monto_regalia))
 					{
-						$monto_total = $monto_total + $monto_bonificacion->monto;
+						$monto_total = $monto_total + $monto_regalia->monto;
 					}
 					
 					if($monto_total > 0)

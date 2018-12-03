@@ -169,9 +169,8 @@ class HomeController extends Controller
 
        	foreach ($puntos as $punto) 
        	{
-            $numero = (int) $punto->red;
 	        $dataCol['name'] = $punto->nombre1.' '.$punto->apellido1;
-	        $dataCol['y'] = $numero;                     		
+	        $dataCol['y'] = intval($punto->red);                     		
        	}
         return response()->json($resultado); 
     }    
