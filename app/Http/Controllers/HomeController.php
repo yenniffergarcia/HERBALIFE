@@ -162,14 +162,15 @@ class HomeController extends Controller
     public function mostrarGraficaPunteoAsociado()
     {
         $dataCol = array();
-       			       			
+    	
        	$puntos = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
        		->select('nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'." AND YEAR(pm.fecha) = ".date('Y').") as red"))->get();
 
        	foreach ($puntos as $punto) 
        	{
+            $numero = (int) $punto->red;
 	        $dataCol['name'] = $punto->nombre1.' '.$punto->apellido1;
-	        $dataCol['y'] = intval($punto->red);                     		
+	        $dataCol['y'] = $numero;                     		
        	}
         return response()->json($dataCol); 
     }    
