@@ -114,7 +114,7 @@ return [
         [
             'text'    => 'Dashboard',
             'icon'    => 'tachometer',
-            'url'  => '#',
+            'url'  => '/',
         ],        
         [
             'text'    => 'Mantenimiento',

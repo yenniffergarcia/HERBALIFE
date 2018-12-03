@@ -4,7 +4,14 @@ Auth::routes();
 
 //Dashboard
 Route::get('/', 'HomeController@index')->name('home');
-
+Route::get('/Pago', 'HomeController@indexPago')->name('Pago.index');
+Route::get('/Regalia', 'HomeController@indexRegalia')->name('Regalia.index');
+Route::get('/Bonificacion', 'HomeController@indexBonificacion')->name('Bonificacion.index');
+Route::get('/getdata/Pago', 'HomeController@getdataPago')->name('getdata.Pago');
+Route::get('/getdata/Regalia', 'HomeController@getdataRegalia')->name('getdata.Regalia');
+Route::get('/getdata/Bonificacion', 'HomeController@getdataBonificacion')->name('getdata.Bonificacion');
+Route::get('/grafica/nivel', 'HomeController@mostrarGraficaNivel');
+Route::get('/grafica/punteo/asociado', 'HomeController@mostrarGraficaPunteoAsociado');
 
 //Categoria
 Route::resource('/Categoria', 'CategoriaController');

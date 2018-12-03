@@ -12,26 +12,32 @@
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-aqua">
             <div class="inner">
-            	<h3>150</h3>
+            	<h3>{{ count($regalias) }}</h3>
             	<p>Regalias</p>
             </div>
             <div class="icon">
-              <i class="ion ion-bag"></i>
+              <i class="fa fa-gift"></i>
             </div>
-            <a href="#" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('Regalia.index') }}" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
 
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-green">
             <div class="inner">
-            	<h3>53<sup style="font-size: 20px">%</sup></h3>
-            	<p>Bonificación actual</p>
+                @if(!$boficaciones->isEmpty())
+	            	@foreach($boficaciones as $boficacion)
+	            		<h3>{{ $boficacion->porcentaje }}<sup style="font-size: 20px">%</sup></h3>
+	            	@endforeach
+                @else
+                  <h3>0<sup style="font-size: 20px">%</sup></h3>                                  
+                @endif 
+            	<p>Bonificación Actual</p>
             </div>
             <div class="icon">
-              <i class="ion ion-stats-bars"></i>
+              <i class="fa fa-money"></i>
             </div>
-            <a href="#" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('Bonificacion.index') }}" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
 
@@ -51,17 +57,27 @@
         <div class="col-lg-3 col-xs-6">
           <div class="small-box bg-red">
             <div class="inner">
-              <h3>65</h3>
+              <h3>{{ count($pagos) }}</h3>
               <p>Pagos Obtenidos</p>
             </div>
             <div class="icon">
-              <i class="ion ion-pie-graph"></i>
+              <i class="fa fa-dollar"></i>
             </div>
-            <a href="#" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
+            <a href="{{ route('Pago.index') }}" class="small-box-footer">Ver más información <i class="fa fa-arrow-circle-right"></i></a>
           </div>
         </div>
     </div>
 
+	<div class="row">
+		<div class="col-sm-6">
+			<div id="graficaNivel" style="min-width: auto; height: 250px; margin: 0 auto"></div>
+		</div>
+		<div class="col-sm-6">
+			<div id="graficaPunteoAsociado" style="min-width: auto; height: 250px; margin: 0 auto"></div>
+		</div>		
+	</div>
+
+	<br>
 
 	<div class="row">
         <div class="col-md-12">
@@ -268,5 +284,94 @@
 		</div>		
 
 	</div>
+
+	<script>
+		
+    $(function () {
+     
+        //on page load  
+        getJSONGraficaNivel();
+        getJSONGraficaPunteoAsociado();
+     
+        function getJSONGraficaNivel()
+        {
+	        $.getJSON('/grafica/nivel', function(chartData) 
+	        {
+	          Highcharts.chart('graficaNivel', {
+	            chart: {
+	              plotBackgroundColor: null,
+	              plotBorderWidth: null,
+	              plotShadow: false,
+	              type: 'pie'
+	            },
+	            title: {
+	              text: 'Asociados por Nivel'
+	            },
+	            tooltip: {
+	              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	            },
+	            plotOptions: {
+	              pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                  enabled: true,
+	                  format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+	                  style: {
+	                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+	                  }
+	                }
+	              }
+	            },
+	            series: [{
+	              name: 'Porcentaje',
+	              colorByPoint: true,
+	              data: chartData   
+	            }]
+	          });
+	        });
+      	}
+
+        function getJSONGraficaPunteoAsociado()
+        {
+	        $.getJSON('/grafica/punteo/asociado', function(chartData) 
+	        {
+	          Highcharts.chart('graficaPunteoAsociado', {
+	            chart: {
+	              plotBackgroundColor: null,
+	              plotBorderWidth: null,
+	              plotShadow: false,
+	              type: 'pie'
+	            },
+	            title: {
+	              text: 'Punteo de Asociados de la Red'
+	            },
+	            tooltip: {
+	              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	            },
+	            plotOptions: {
+	              pie: {
+	                allowPointSelect: true,
+	                cursor: 'pointer',
+	                dataLabels: {
+	                  enabled: true,
+	                  format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+	                  style: {
+	                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+	                  }
+	                }
+	              }
+	            },
+	            series: [{
+	              name: 'Porcentaje',
+	              colorByPoint: true,
+	              data: chartData   
+	            }]
+	          });
+	        });
+      	}      	
+    });		
+
+	</script>
 
 @stop
