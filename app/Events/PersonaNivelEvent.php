@@ -62,7 +62,7 @@ class PersonaNivelEvent
         }
         if(count($doce_meses)>0)
         {
-            if($suma_doce_meses->punto > 3999)
+            if($suma_doce_meses > 3999)
             {
                 $this->cambiar_estado_nive($data, 3, 4);             
             }                 
@@ -105,7 +105,7 @@ class PersonaNivelEvent
         }
         if(count($doce_meses)>0)
         {
-            if($suma_doce_meses->punto > 3999)
+            if($suma_doce_meses > 3999)
             {
                 $this->cambiar_estado_nive($data, 3, 4);             
             }                 

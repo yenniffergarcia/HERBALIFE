@@ -277,7 +277,7 @@
 		            </div>
 	            </div>
 	            <div class="box-footer clearfix">
-	            	<a href="{{ route('Stock.index') }}" class="btn btn-sm btn-default btn-flat pull-right">Ver todos los pedidos...</a>
+	            	<a href="{{ route('Stock.index') }}" class="btn btn-sm btn-default btn-flat pull-right">Ver todos los productos...</a>
 	            </div>
 	        </div>
 
