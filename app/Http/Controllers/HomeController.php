@@ -168,8 +168,10 @@ class HomeController extends Controller
 
        	foreach ($puntos as $punto) 
        	{
+            $numero = 0;
+            $numero = $punto->red;
 	        $dataCol['name'] = $punto->nombre1.' '.$punto->apellido1;
-	        $dataCol['y'] = $punto->red;                     		
+	        $dataCol['y'] = $numero;                     		
        	}
         return response()->json($dataCol); 
     }    
