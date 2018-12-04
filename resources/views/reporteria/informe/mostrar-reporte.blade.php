@@ -36,10 +36,9 @@
         </div>        
 
         <div class="box-body">
-            <button class="btn btn-warning btn-sm imprimirBtn">Imprimir</button>
             @if(!$puntos->isEmpty())
             <div class="row pull-right">
-                
+                <button class="btn btn-warning btn-sm imprimirBtn">Imprimir</button>
             </div>
             @endif
 

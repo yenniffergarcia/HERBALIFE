@@ -50,7 +50,7 @@ class PaqueteInicialPersonaEvent
         if(Auth::user()->fkrol == 3)
         {
             $insert = new PuntoMes;
-            $insert->fkmes = $mes->id;
+            $insert->fkmes = date('n');
             $insert->fkpersona = Auth::user()->fkpersona;
             $insert->punto = $punteo;
             $insert->fecha = date("Y-m-d", strtotime($fecha->created_at));
@@ -61,7 +61,6 @@ class PaqueteInicialPersonaEvent
     public function created_personanivel(PaqueteInicialPersona $data)
     {
         $suma = 0;
-        $persona = User::where('fkpersona', $data->fkpersona)->first();
         $paquetes = PaqueteInicialPersona::join('paquete_producto', 'paquete_inicial_persona.fkpaquete_producto', 'paquete_producto.id')
             ->join('producto', 'paquete_producto.fkproducto', 'producto.id')
             ->where('paquete_inicial_persona.fkpersona', $data->fkpersona)
@@ -95,12 +94,14 @@ class PaqueteInicialPersonaEvent
 
     public function cambiar_estado_nive($data, $numero_actual, $numero_nuevo)
     {
+        $persona = User::where('fkpersona', $data->fkpersona)->first();
+
         $insert = new PersonaNivel;
         $insert->fkpersona = $data->fkpersona;
         $insert->fknivel = $numero_nuevo;
         if($insert->save())
         {
-            $update = User::findOrFail($data->fkpersona);
+            $update = User::findOrFail($persona->id);
             $update->estado = 1;
             $update->save();
         } 

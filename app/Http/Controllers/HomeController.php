@@ -360,8 +360,8 @@ class HomeController extends Controller
                 ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
                 ->select('punto', 'mes', 'fecha')->get();   
 
-        $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
-            ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();                             
+        $puntos_red = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
+            ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'.") as red"))->get();                             
 
         return view('reporteria.informe.mostrar-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));                   
     }
@@ -387,8 +387,8 @@ class HomeController extends Controller
                     ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), $request->anio)
                     ->select('punto', 'mes', 'fecha')->get();   
 
-            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
-                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
+            $puntos_red = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
         }
         else
         {
@@ -406,8 +406,8 @@ class HomeController extends Controller
                     ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
                     ->select('punto', 'mes', 'fecha')->get();   
 
-            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
-                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();
+            $puntos_red = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'.") as red"))->get();
         }
 
         return view('reporteria.informe.mostrar-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));                   
@@ -434,8 +434,8 @@ class HomeController extends Controller
                     ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), $anio)
                     ->select('punto', 'mes', 'fecha')->get();   
 
-            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
-                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
+            $puntos_red = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
         }
         else
         {
@@ -453,8 +453,8 @@ class HomeController extends Controller
                     ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
                     ->select('punto', 'mes', 'fecha')->get();   
 
-            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
-                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();
+            $puntos_red = Persona::where('id_padre', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id = ".'persona.id'.") as red"))->get();
         }
 
         $pdf = PDF::loadView('reporteria.informe.imprimir-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));
