@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
@@ -12,6 +13,8 @@ use App\Regalia;
 use App\Persona;
 use App\PuntoMes;
 use App\PagoAsociado;
+use App\PedidoAceptado;
+use App\PersonaNivel;
 use Auth;
 
 class HomeController extends Controller
@@ -109,7 +112,9 @@ class HomeController extends Controller
             ->select(['monto', 'mes', 'anio', 'nombre', 'porcentaje']);
 
         return Datatables::of($query)->make(true);
-    }    
+    }   
+
+    // ------------------- Funciones para las Gráficas  ------------------------- 
 
     public function mostrarGraficaNivel()
     {
@@ -175,6 +180,286 @@ class HomeController extends Controller
             array_push($resultado,$dataCol);                     		
        	}
         return response()->json($resultado); 
+    }   
+
+    // ------------------- Funciones para la Reporteria de Pedido  -------------------------
+
+    public function reporteriaVerPedido() 
+    {
+        $stocks = Stock::join('producto', 'stock.fkproducto', 'producto.id')
+                ->where('stock.fkpersona', Auth::user()->fkpersona)
+                ->select('stock.id as id', 'nombre')->get();
+
+        $niveles = PersonaNivel::join('nivel', 'persona_nivel.fknivel', 'nivel.id')
+                ->where('persona_nivel.fkpersona', Auth::user()->fkpersona)
+                ->select('persona_nivel.id as id', 'nombre')->get();
+
+        $persona = Persona::find(Auth::user()->fkpersona);
+
+        $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+            ->join('producto', 'stock.fkproducto', 'producto.id')
+            ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+            ->where('pedido.fkcodigo', $persona->codigo)
+            ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+        $pedidos = Factura::where('fkcodigo', $persona->codigo)
+            ->where('estado', 1)
+            ->select('id', 'subtotal', 'total', 'fecha')->get();
+
+        return view('reporteria.pedido.mostrar-reporte', compact('productos', 'pedidos', 'stocks', 'niveles'));                   
+    }
+
+    public function reporteriaFiltrarPedido(Request $request) 
+    {
+        $stocks = Stock::join('producto', 'stock.fkproducto', 'producto.id')
+                ->where('stock.fkpersona', Auth::user()->fkpersona)
+                ->select('stock.id as id', 'nombre')->get();
+
+        $niveles = PersonaNivel::join('nivel', 'persona_nivel.fknivel', 'nivel.id')
+                ->where('persona_nivel.fkpersona', Auth::user()->fkpersona)
+                ->select('persona_nivel.id as id', 'nombre')->get();
+
+        $persona = Persona::find(Auth::user()->fkpersona);
+
+        if(intval($request->fkproducto) > 0 && intval($request->fkpersonivel) == 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('producto.id', $request->fkproducto)
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+
+        }
+        if(intval($request->fkproducto) == 0 && intval($request->fkpersonivel) > 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkpersonivel', $request->fkpersonivel)
+                ->where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+        }
+        if(intval($request->fkproducto) > 0 && intval($request->fkpersonivel) > 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('producto.id', $request->fkproducto)
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkpersonivel', $request->fkpersonivel)
+                ->where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+        } 
+        if(intval($request->fkproducto) == 0 && intval($request->fkpersonivel) == 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+
+        }     
+
+        return view('reporteria.pedido.mostrar-reporte', compact('productos', 'pedidos', 'stocks', 'niveles'));                   
+    } 
+
+    public function imprimirReportePedido($fkproducto, $fkpersonivel)
+    {
+        $persona = Persona::find(Auth::user()->fkpersona);
+
+        if(intval($fkproducto) > 0 && intval($fkpersonivel) == 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('producto.id', $fkproducto)
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+
+        }
+        if(intval($fkproducto) == 0 && intval($fkpersonivel) > 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkpersonivel', $fkpersonivel)
+                ->where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+        }
+        if(intval($fkproducto) > 0 && intval($fkpersonivel) > 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('producto.id', $fkproducto)
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkpersonivel', $fkpersonivel)
+                ->where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+        } 
+        if(intval($fkproducto) == 0 && intval($fkpersonivel) == 0)
+        {
+            $productos = PedidoAceptado::join('stock', 'pedido_aceptado.fkstock', 'stock.id')
+                ->join('producto', 'stock.fkproducto', 'producto.id')
+                ->join('pedido', 'pedido_aceptado.fkpedido', 'pedido.id')
+                ->where('pedido.fkcodigo', $persona->codigo)
+                ->select('pedido_aceptado.cantidad as cantidad', 'producto.nombre as producto', 'producto.punto as punto', 'pedido_aceptado.fkpedido as fkpedido')->get();
+
+            $pedidos = Factura::where('fkcodigo', $persona->codigo)
+                ->where('estado', 1)
+                ->select('id', 'subtotal', 'total', 'fecha')->get();
+
+        }     
+
+        $pdf = PDF::loadView('reporteria.pedido.imprimir-reporte', compact('productos', 'pedidos'));
+
+        return $pdf->download('reporte_pedido_'. date('d-m-Y h:i:s') .'.pdf');
+    }
+
+
+    public function reporteriaVerInformeAsociado() 
+    {
+        $bonificaciones = Bonificacion::join('mes', 'bonificacion.fkmes', 'mes.id')
+                ->join('equipo_expansion', 'bonificacion.fkequipo_expansion', 'equipo_expansion.id')
+                ->where('bonificacion.fkpersona', Auth::user()->fkpersona)
+                ->select('nombre', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+        $regalias = Regalia::join('mes', 'regalia.fkmes', 'mes.id')
+                ->join('pedido', 'regalia.fkpedido', 'pedido.id')
+                ->where('regalia.fkpersona', Auth::user()->fkpersona)
+                ->select('pedido.id as id', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+        $puntos = PuntoMes::join('mes', 'punto_mes.fkmes', 'mes.id')
+                ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
+                ->select('punto', 'mes', 'fecha')->get();   
+
+        $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
+            ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();                             
+
+        return view('reporteria.informe.mostrar-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));                   
+    }
+
+    public function reporteriaFiltrarInformeAsociado(Request $request) 
+    {
+        if(intval($request->anio) > 0)
+        {
+            $bonificaciones = Bonificacion::join('mes', 'bonificacion.fkmes', 'mes.id')
+                    ->join('equipo_expansion', 'bonificacion.fkequipo_expansion', 'equipo_expansion.id')
+                    ->where('bonificacion.fkpersona', Auth::user()->fkpersona)
+                    ->where('bonificacion.anio', $request->anio)
+                    ->select('nombre', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $regalias = Regalia::join('mes', 'regalia.fkmes', 'mes.id')
+                    ->join('pedido', 'regalia.fkpedido', 'pedido.id')
+                    ->where('regalia.fkpersona', Auth::user()->fkpersona)
+                    ->where('regalia.anio', $request->anio)
+                    ->select('pedido.id as id', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $puntos = PuntoMes::join('mes', 'punto_mes.fkmes', 'mes.id')
+                    ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
+                    ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), $request->anio)
+                    ->select('punto', 'mes', 'fecha')->get();   
+
+            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
+        }
+        else
+        {
+            $bonificaciones = Bonificacion::join('mes', 'bonificacion.fkmes', 'mes.id')
+                    ->join('equipo_expansion', 'bonificacion.fkequipo_expansion', 'equipo_expansion.id')
+                    ->where('bonificacion.fkpersona', Auth::user()->fkpersona)
+                    ->select('nombre', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $regalias = Regalia::join('mes', 'regalia.fkmes', 'mes.id')
+                    ->join('pedido', 'regalia.fkpedido', 'pedido.id')
+                    ->where('regalia.fkpersona', Auth::user()->fkpersona)
+                    ->select('pedido.id as id', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $puntos = PuntoMes::join('mes', 'punto_mes.fkmes', 'mes.id')
+                    ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
+                    ->select('punto', 'mes', 'fecha')->get();   
+
+            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();
+        }
+
+        return view('reporteria.informe.mostrar-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));                   
+    }
+
+    public function imprimirReporteInformeAsociado($anio)
+    {
+        if(intval($anio) > 0)
+        {
+            $bonificaciones = Bonificacion::join('mes', 'bonificacion.fkmes', 'mes.id')
+                    ->join('equipo_expansion', 'bonificacion.fkequipo_expansion', 'equipo_expansion.id')
+                    ->where('bonificacion.fkpersona', Auth::user()->fkpersona)
+                    ->where('bonificacion.anio', $anio)
+                    ->select('nombre', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $regalias = Regalia::join('mes', 'regalia.fkmes', 'mes.id')
+                    ->join('pedido', 'regalia.fkpedido', 'pedido.id')
+                    ->where('regalia.fkpersona', Auth::user()->fkpersona)
+                    ->where('regalia.anio', $anio)
+                    ->select('pedido.id as id', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $puntos = PuntoMes::join('mes', 'punto_mes.fkmes', 'mes.id')
+                    ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
+                    ->where(\DB::raw("(SELECT YEAR(p.fecha) FROM punto_mes p WHERE p.id = ".'punto_mes.id'.")"), $anio)
+                    ->select('punto', 'mes', 'fecha')->get();   
+
+            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'." AND YEAR(pm.fecha) = ".$request->anio.") as red"))->get();  
+        }
+        else
+        {
+            $bonificaciones = Bonificacion::join('mes', 'bonificacion.fkmes', 'mes.id')
+                    ->join('equipo_expansion', 'bonificacion.fkequipo_expansion', 'equipo_expansion.id')
+                    ->where('bonificacion.fkpersona', Auth::user()->fkpersona)
+                    ->select('nombre', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $regalias = Regalia::join('mes', 'regalia.fkmes', 'mes.id')
+                    ->join('pedido', 'regalia.fkpedido', 'pedido.id')
+                    ->where('regalia.fkpersona', Auth::user()->fkpersona)
+                    ->select('pedido.id as id', 'porcentaje', 'monto', 'mes', 'anio')->get();
+
+            $puntos = PuntoMes::join('mes', 'punto_mes.fkmes', 'mes.id')
+                    ->where('punto_mes.fkpersona', Auth::user()->fkpersona)
+                    ->select('punto', 'mes', 'fecha')->get();   
+
+            $puntos_red = Persona::where('id', Auth::user()->fkpersona)->where('estado', 1)
+                ->select('codigo', 'nombre1', 'apellido1', \DB::raw("(SELECT SUM(pm.punto) FROM punto_mes pm INNER JOIN persona p ON p.id = pm.fkpersona WHERE p.id_padre = ".'persona.id'.") as red"))->get();
+        }
+
+        $pdf = PDF::loadView('reporteria.informe.imprimir-reporte', compact('bonificaciones', 'regalias', 'puntos', 'puntos_red'));
+
+        return $pdf->download('reporte_informe_'. date('d-m-Y h:i:s') .'.pdf');
     }    
 
 }

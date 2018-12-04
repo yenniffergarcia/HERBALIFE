@@ -187,7 +187,23 @@ return [
                 'icon_color' => 'yellow',
                 ],                        
             ],
-        ],        
+        ],
+        [
+            'text'    => 'Reportería',
+            'icon'    => 'wrench',
+            'submenu' => [
+                [
+                'text' => 'Pedido Reporte',
+                'url'  => '/mostrar/reporte/pedido',
+                'icon_color' => 'green',
+                ],   
+                [
+                'text' => 'Informe del Asociado',
+                'url'  => '/mostrar/reporte/informe',
+                'icon_color' => 'green',
+                ],  
+            ],
+        ],                 
     ],
     /*
     |--------------------------------------------------------------------------

@@ -4,6 +4,8 @@ Auth::routes();
 
 //Dashboard
 Route::get('/', 'HomeController@index')->name('home');
+
+//Pantallas Punteo, Pago, Regalia y Bonificacion
 Route::get('/Punteo', 'HomeController@indexPuntos')->name('Punteo.index');
 Route::get('/Pago', 'HomeController@indexPago')->name('Pago.index');
 Route::get('/Regalia', 'HomeController@indexRegalia')->name('Regalia.index');
@@ -12,8 +14,20 @@ Route::get('/getdata/Punteo', 'HomeController@getdataPuntos')->name('getdata.Pun
 Route::get('/getdata/Pago', 'HomeController@getdataPago')->name('getdata.Pago');
 Route::get('/getdata/Regalia', 'HomeController@getdataRegalia')->name('getdata.Regalia');
 Route::get('/getdata/Bonificacion', 'HomeController@getdataBonificacion')->name('getdata.Bonificacion');
+
+//Graficas
 Route::get('/grafica/nivel', 'HomeController@mostrarGraficaNivel');
 Route::get('/grafica/punteo/asociado', 'HomeController@mostrarGraficaPunteoAsociado');
+
+//Reporteria de Pedido
+Route::get('/mostrar/reporte/pedido', 'HomeController@reporteriaVerPedido');
+Route::post('/filtrar/reporte/pedido', 'HomeController@reporteriaFiltrarPedido')->name('filtrar.pedido');
+Route::get('/imprimir/reporte/pedido/{fkproducto}/{fkpersonivel}', 'HomeController@imprimirReportePedido')->name('imprimir.pedido');
+
+//Reporteria de Informe Asociado
+Route::get('/mostrar/reporte/informe', 'HomeController@reporteriaVerInformeAsociado');
+Route::post('/filtrar/reporte/informe', 'HomeController@reporteriaFiltrarInformeAsociado')->name('filtrar.informe');
+Route::get('/imprimir/reporte/informe/{anio}', 'HomeController@imprimirReporteInformeAsociado')->name('imprimir.informe');
 
 //Categoria
 Route::resource('/Categoria', 'CategoriaController');
